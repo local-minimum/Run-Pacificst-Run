@@ -231,6 +231,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destroyObjectOnConflict: 1
+  xMove: 0.05
+  xMoveTo: 0.1
+  yMove: 0.15
+  yMoveTo: 0.15
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -318,7 +322,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destroyObjectOnConflict: 1
-  gameTickTime: 1
+  gameTickTime: 0.6
   playerTicksPerTick: 1
 --- !u!4 &618781602
 Transform:
@@ -425,8 +429,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destroyObjectOnConflict: 1
+  movables:
+  - x: 0
+    y: 1
+    id: 0
+    actor: 3
+    actionX: 0
+    actionY: 0
+    who: {fileID: 0}
+  imovables:
+  - x: 3
+    y: 2
+  - x: -5
+    y: 1
+  - x: -4
+    y: 0
   gridSize: 1
-  floor: {fileID: 21300000, guid: ef6e2f587ee8b1a4f956f13fbd51c0c1, type: 3}
+  floorBasic: {fileID: 21300000, guid: ef6e2f587ee8b1a4f956f13fbd51c0c1, type: 3}
+  wallImovable: {fileID: 21300000, guid: 1d70d488448b0e6428d1146f9928eb72, type: 3}
+  wallMovable: {fileID: 21300000, guid: b24b830099c9a69459bb49f5b51ab461, type: 3}
 --- !u!4 &1087868440
 Transform:
   m_ObjectHideFlags: 0

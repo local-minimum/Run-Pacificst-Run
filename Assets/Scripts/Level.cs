@@ -2,10 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
-public enum Actor { PLAYER, MONSTER, NPC, OBJECT };
+public enum Actor { PLAYER, MONSTER, NPC, WALL };
+public enum FloorType { BASIC, MOVABLE, IMOVABLE };
 
+[Serializable]
+struct Imovable
+{
+    public int x;
+    public int y;
+    public Imovable(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+}
 
+[Serializable]
 struct Movable
 {
     public int x;
@@ -60,12 +74,17 @@ struct Movable
         return new Movable(x, y, actor, id, who, actionX, actionY);
     }
 
+    public Movable Evolve(int actionX, int actionY)
+    {
+        return new Movable(x, y, actor, id, who, actionX, actionY);
+    }
+
     public Movable Reset()
     {
         return new Movable(x, y, actor, id, who, 0, 0);
     }
 
-    public Movable Enacted()
+    public Movable Enact()
     {
         return new Movable(NextX, NextY, actor, id, who, 0, 0);
     }
@@ -89,7 +108,10 @@ struct Movable
 
 public class Level : Singleton<Level>
 {
+    [SerializeField]
     List<Movable> movables = new List<Movable>();
+    [SerializeField]
+    List<Imovable> imovables = new List<Imovable>();
 
     public void RegisterPlayer(PlayerController playerController)
     {
@@ -156,7 +178,7 @@ public class Level : Singleton<Level>
                 if (Enact(m))
                 {
                     moves += 1;
-                    movables[i] = m.Enacted();
+                    movables[i] = m.Enact();
                 } else
                 {
                     movables[i] = m.Reset();
@@ -176,7 +198,7 @@ public class Level : Singleton<Level>
     {
         int nextX = m.NextX;
         int nextY = m.NextY;
-        ResolveConflict(nextX, nextY, m.actor, m.who);
+        ResolveConflict(nextX, nextY, m.actor, m.who, m.actionX, m.actionY);
         bool occupied = IsOccupied(nextX, nextY, m.actor);
         if (!occupied)
         {
@@ -186,14 +208,32 @@ public class Level : Singleton<Level>
         return false;
     }
 
-    void ResolveConflict(int x, int y, Actor actor, GameObject who)
+    void ResolveConflict(int x, int y, Actor actor, GameObject who, int xDir, int yDir)
     {
-
+        if (actor != Actor.PLAYER) return;
+        for (int i=0, l=movables.Count(); i<l; i++)
+        {
+            Movable m = movables[i];
+            if (m.x == x && m.y == y && m.actor == Actor.WALL)
+            {
+                int nextX = x + xDir;
+                int nextY = y + yDir;
+                if (!IsOccupied(nextX, nextY, Actor.WALL))
+                {
+                    movables[i] = m.Evolve(xDir, yDir).Enact();
+                }
+                return;
+            }
+        }
     }
 
     bool IsOccupied(int x, int y, Actor actor)
     {
-        //TODO: Return remaining obstacle
+        if (imovables.Any(e => e.x == x && e.y == y)) return true;
+        if (movables.Any(e => e.x == x && e.y == y)) return true;
+
+        //TODO: Block if actor is wall and object on pos
+
         return false;
     }
 
@@ -207,11 +247,16 @@ public class Level : Singleton<Level>
     }
 
     [SerializeField]
-    Sprite floor;
+    Sprite floorBasic;
+    [SerializeField]
+    Sprite wallImovable;
+    [SerializeField]
+    Sprite wallMovable;
+
     List<Transform> floors = new List<Transform>();
     int floorIdx;
 
-    Transform GetFloorTransform()
+    Transform GetFloorTransform(FloorType floorType)
     {
         Transform floor;
 
@@ -223,10 +268,19 @@ public class Level : Singleton<Level>
         {
             GameObject go = new GameObject("Floor");
             go.transform.SetParent(transform);
-            SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-            sr.sprite = this.floor;
+            SpriteRenderer sr = go.AddComponent<SpriteRenderer>();            
             floor = go.transform;
             floors.Add(floor);
+        }
+        if (floorType == FloorType.BASIC)
+        {
+            floor.GetComponent<SpriteRenderer>().sprite = floorBasic;
+        } else if (floorType == FloorType.IMOVABLE)
+        {
+            floor.GetComponent<SpriteRenderer>().sprite = wallImovable;
+        } else if (floorType == FloorType.MOVABLE)
+        {
+            floor.GetComponent<SpriteRenderer>().sprite = wallMovable;
         }
         floorIdx++;
         floor.gameObject.SetActive(true);
@@ -249,13 +303,24 @@ public class Level : Singleton<Level>
         int right = Mathf.CeilToInt(camRect.xMax);
         int bottom = Mathf.FloorToInt(camRect.yMin);
         int top = Mathf.CeilToInt(camRect.yMax);
+        FloorType floorType;
 
         for (int x=left; x<=right; x++)
         {
             for (int y=bottom; y<=top; y++)
             {
-                Transform t = GetFloorTransform();
-                t.position = GetPositionAt(x, y);                
+                if (imovables.Any(e => e.x == x && e.y == y))
+                {
+                    floorType = FloorType.IMOVABLE;
+                } else if (movables.Any(e => e.x == x && e.y == y && e.actor == Actor.WALL))
+                {
+                    floorType = FloorType.MOVABLE;
+                } else
+                {
+                    floorType = FloorType.BASIC;
+                }
+                Transform t = GetFloorTransform(floorType);
+                t.position = GetPositionAt(x, y);
             }
         }
     }

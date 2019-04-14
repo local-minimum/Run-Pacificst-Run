@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
         GameClock.Instance.OnTick += PlayerController_OnTick;
         GameInput.Instance.OnInput += PlayerController_OnInput;
         Level.Instance.RegisterPlayer(this);
+        GameCamera.Instance.RegisterPlayer(this);
     }
 
     private void OnDisable()
@@ -36,6 +37,8 @@ public class PlayerController : MonoBehaviour
             GameInput.Instance.OnInput -= PlayerController_OnInput;
         if (Level.Instance)
             Level.Instance.UnRegisterPlayer(this);
+        if (GameCamera.Instance)
+            GameCamera.Instance.UnregisterPlayer(this);
     }
 
     private void PlayerController_OnTick(int n, int partialTick, float tickDuration, bool everyone)
