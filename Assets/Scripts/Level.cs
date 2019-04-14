@@ -4,7 +4,6 @@ using UnityEngine;
 using System.Linq;
 using System;
 
-public enum Actor { PLAYER, MONSTER, NPC, WALL };
 public enum FloorType { BASIC, MOVABLE, IMOVABLE };
 
 [Serializable]
@@ -20,17 +19,18 @@ struct Imovable
 }
 
 [Serializable]
-struct Movable
+public struct Movable
 {
     public int x;
     public int y;
-    public int id;
-    public Actor actor;
+    int id;
+    public int Id { get => id; }
+    public MoverType actor;
     public int actionX;
     public int actionY;
     public GameObject who;
 
-    public Movable(int x, int y, Actor actor, int id, GameObject who)
+    public Movable(int x, int y, MoverType actor, int id, GameObject who)
     {
         this.x = x;
         this.y = y;
@@ -41,7 +41,7 @@ struct Movable
         this.who = who;
     }
 
-    public Movable(int x, int y, Actor actor, int id, GameObject who, int actionX, int actionY)
+    public Movable(int x, int y, MoverType actor, int id, GameObject who, int actionX, int actionY)
     {
         this.x = x;
         this.y = y;
@@ -52,22 +52,22 @@ struct Movable
         this.who = who;
     }
 
-    public Movable Evolve(PlayerActionType actionType)
+    public Movable Evolve(MoverActionType actionType)
     {
         int actionX = 0;
         int actionY = 0;
         switch (actionType)
         {
-            case PlayerActionType.North:
+            case MoverActionType.North:
                 actionY = 1;
                 break;
-            case PlayerActionType.East:
+            case MoverActionType.East:
                 actionX = 1;
                 break;
-            case PlayerActionType.South:
+            case MoverActionType.South:
                 actionY = -1;
                 break;
-            case PlayerActionType.West:
+            case MoverActionType.West:
                 actionX = -1;
                 break;
         }
@@ -108,36 +108,41 @@ struct Movable
 
 public class Level : Singleton<Level>
 {
+    static int nextMovableId = 0;
+
     [SerializeField]
     List<Movable> movables = new List<Movable>();
     [SerializeField]
     List<Imovable> imovables = new List<Imovable>();
 
-    public void RegisterPlayer(PlayerController playerController)
+    public int RegisterMover(Mover mover)
     {
-        Movable player = new Movable(0, 0, Actor.PLAYER, playerController.playerID, playerController.gameObject);
+        int id = nextMovableId;
+        nextMovableId++;
+        Movable player = new Movable(0, 0, mover.TypeOfMover, id, mover.gameObject);
         movables.Add(player);
-        playerController.OnPlayerAction += PlayerController_OnPlayerAction;
+        mover.OnAction += HandleMoverAction;
+        return id;
     }
 
-    public void UnRegisterPlayer(PlayerController playerController)
+    public void UnRegisterMover(Mover mover)
     {
-        movables.RemoveAll(m => m.who == playerController.gameObject);
-        playerController.OnPlayerAction -= PlayerController_OnPlayerAction;
+        movables.RemoveAll(m => m.who == mover.gameObject);
+        mover.OnAction -= HandleMoverAction;
     }
 
-    private void PlayerController_OnPlayerAction(int playerID, PlayerActionType actionType)
+    private void HandleMoverAction(int moverId, MoverType moverType, MoverActionType actionType)
     {
         for (int i = 0, l = movables.Count; i < l; i++)
         {
             Movable m = movables[i];
-            if (m.actor == Actor.PLAYER && m.id == playerID)
+            if (m.actor == moverType && m.Id == moverId)
             {
                 movables[i] = m.Evolve(actionType);
                 return;
             }
         }
-        Debug.LogWarning(string.Format("Could not find player id {0}", playerID));
+        Debug.LogWarning(string.Format("Could not find player id {0}", moverId));
     }
 
     private void OnEnable()
@@ -173,7 +178,7 @@ public class Level : Singleton<Level>
         for (int i = 0, l = movables.Count(); i < l; i += 1)
         {
             Movable m = movables[i];
-            if (m.actor == Actor.PLAYER && m.WantsToMove)
+            if (m.actor == MoverType.PLAYER && m.WantsToMove)
             {
                 if (Enact(m))
                 {
@@ -208,17 +213,17 @@ public class Level : Singleton<Level>
         return false;
     }
 
-    void ResolveConflict(int x, int y, Actor actor, GameObject who, int xDir, int yDir)
+    void ResolveConflict(int x, int y, MoverType actor, GameObject who, int xDir, int yDir)
     {
-        if (actor != Actor.PLAYER) return;
+        if (actor != MoverType.PLAYER) return;
         for (int i=0, l=movables.Count(); i<l; i++)
         {
             Movable m = movables[i];
-            if (m.x == x && m.y == y && m.actor == Actor.WALL)
+            if (m.x == x && m.y == y && m.actor == MoverType.WALL)
             {
                 int nextX = x + xDir;
                 int nextY = y + yDir;
-                if (!IsOccupied(nextX, nextY, Actor.WALL))
+                if (!IsOccupied(nextX, nextY, MoverType.WALL))
                 {
                     movables[i] = m.Evolve(xDir, yDir).Enact();
                 }
@@ -227,7 +232,7 @@ public class Level : Singleton<Level>
         }
     }
 
-    bool IsOccupied(int x, int y, Actor actor)
+    bool IsOccupied(int x, int y, MoverType actor)
     {
         if (imovables.Any(e => e.x == x && e.y == y)) return true;
         if (movables.Any(e => e.x == x && e.y == y)) return true;
@@ -236,14 +241,34 @@ public class Level : Singleton<Level>
 
         return false;
     }
-
+    
     [SerializeField]
     float gridSize = 1f;
     public float GridSize { get => gridSize; }
 
+    public Movable GetMovableById(int id)
+    {
+        return movables.FirstOrDefault(m => m.Id == id);
+    }
+
     Vector2 GetPositionAt(int x, int y)
     {
         return new Vector2(gridSize * x, gridSize * y);
+    }
+
+    public Movable GetPlayerClosestTo(int x, int y, int maxDist=-1)
+    {
+        return movables
+            .Where(m => m.actor == MoverType.PLAYER)
+            .Select(m => new
+            {
+                dist = Mathf.Abs(m.x - x) + Mathf.Abs(m.y - y),
+                movable = m,
+            })
+            .Where(o => o.dist < maxDist || maxDist < 0)
+            .OrderBy(o => o.dist)
+            .Select(o => o.movable)
+            .FirstOrDefault();
     }
 
     [SerializeField]
@@ -312,7 +337,7 @@ public class Level : Singleton<Level>
                 if (imovables.Any(e => e.x == x && e.y == y))
                 {
                     floorType = FloorType.IMOVABLE;
-                } else if (movables.Any(e => e.x == x && e.y == y && e.actor == Actor.WALL))
+                } else if (movables.Any(e => e.x == x && e.y == y && e.actor == MoverType.WALL))
                 {
                     floorType = FloorType.MOVABLE;
                 } else

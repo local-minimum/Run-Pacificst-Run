@@ -54,9 +54,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="15.839192"
-     inkscape:cx="58.39449"
-     inkscape:cy="942.80857"
+     inkscape:zoom="22.4"
+     inkscape:cx="82.886309"
+     inkscape:cy="932.30303"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -176,6 +176,25 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccc"
        inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\player.png"
+       inkscape:export-xdpi="450"
+       inkscape:export-ydpi="450" />
+    <rect
+       inkscape:export-ydpi="450"
+       inkscape:export-xdpi="450"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\enemy.png"
+       y="108.87973"
+       x="93.336494"
+       height="10"
+       width="10"
+       id="rect4486"
+       style="opacity:1;fill:#b3b3b3;fill-opacity:0;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <path
+       style="fill:#cccccc;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 100.53193,112.3064 c 0.25761,-0.41184 0.63037,-0.93721 1.40778,-0.54047 0.48774,0.41427 0.83634,0.8228 0.18045,1.71995 -0.52571,0.32192 -1.08087,0.28358 -1.40044,-0.0424 l -0.67757,0.2962 c 0.12199,0.39893 0.0405,0.96238 0.0536,1.31849 0.77199,0.0767 0.94096,0.0879 1.3389,0.15976 0.0745,0.24283 0.0584,0.46203 -0.20819,0.49774 l -1.736197,-0.18941 c -0.244391,-0.47385 -0.524896,-0.98373 -0.471922,-1.54679 -0.701096,0.29542 -1.281037,0.5268 -1.922703,0.19822 0.379633,0.61905 0.06823,0.89472 0.153349,1.39596 -0.853234,0.23354 -1.778451,0.21515 -2.714785,0.15784 l -0.34724,0.50508 0.252539,-1.10486 1.546796,-0.28407 c -0.326725,-0.4835 -0.486156,-0.86598 -0.678696,-1.48367 -0.03124,-0.67738 0.460653,-0.86972 0.994368,-1.10485 1.037013,0.0294 2.366211,0.0413 3.511955,0.26099 z"
+       id="path4492"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccccccccccccccc"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\enemy.png"
        inkscape:export-xdpi="450"
        inkscape:export-ydpi="450" />
   </g>

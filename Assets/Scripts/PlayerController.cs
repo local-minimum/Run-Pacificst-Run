@@ -2,30 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum PlayerActionType { Rest, North, East, South, West };
 
-public delegate void PlayerAction(int playerID, PlayerActionType actionType);
-
-public class PlayerController : MonoBehaviour
+public class PlayerController : Mover
 {
-    private static int nextPlayerID;
-    public int playerID { get; private set; }
 
-    public event PlayerAction OnPlayerAction;
-
-    PlayerActionType nextAction;
+    MoverActionType nextAction;
 
     private void Awake()
     {
-        playerID = nextPlayerID;
-        nextPlayerID += 1;
+        TypeOfMover = MoverType.PLAYER;
     }
 
     private void OnEnable()
     {
         GameClock.Instance.OnTick += PlayerController_OnTick;
         GameInput.Instance.OnInput += PlayerController_OnInput;
-        Level.Instance.RegisterPlayer(this);
+        MoverID = Level.Instance.RegisterMover(this);
         GameCamera.Instance.RegisterPlayer(this);
     }
 
@@ -36,15 +28,15 @@ public class PlayerController : MonoBehaviour
         if (GameInput.Instance)
             GameInput.Instance.OnInput -= PlayerController_OnInput;
         if (Level.Instance)
-            Level.Instance.UnRegisterPlayer(this);
+            Level.Instance.UnRegisterMover(this);
         if (GameCamera.Instance)
             GameCamera.Instance.UnregisterPlayer(this);
     }
 
     private void PlayerController_OnTick(int n, int partialTick, float tickDuration, bool everyone)
     {
-        OnPlayerAction?.Invoke(playerID, nextAction);
-        nextAction = PlayerActionType.Rest;
+        Emit(nextAction);
+        nextAction = MoverActionType.Rest;
     }
 
     private void PlayerController_OnInput(InputType inputType)
@@ -52,22 +44,18 @@ public class PlayerController : MonoBehaviour
         switch(inputType)
         {
             case InputType.North:
-                nextAction = PlayerActionType.North;
+                nextAction = MoverActionType.North;
                 break;
             case InputType.East:
-                nextAction = PlayerActionType.East;
+                nextAction = MoverActionType.East;
                 break;
             case InputType.South:
-                nextAction = PlayerActionType.South;
+                nextAction = MoverActionType.South;
                 break;
             case InputType.West:
-                nextAction = PlayerActionType.West;
+                nextAction = MoverActionType.West;
                 break;
         }
     }
 
-    public void Move(Vector2 to)
-    {
-        transform.position = to;
-    }
 }
