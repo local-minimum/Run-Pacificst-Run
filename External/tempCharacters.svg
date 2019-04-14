@@ -82,7 +82,10 @@
      inkscape:groupmode="layer"
      id="layer1">
     <g
-       id="g4148">
+       id="g4148"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\noPushWall.png"
+       inkscape:export-xdpi="450"
+       inkscape:export-ydpi="450">
       <rect
          y="108.87973"
          x="40.406101"
@@ -107,9 +110,15 @@
        height="10"
        width="10"
        id="rect4142"
-       style="opacity:1;fill:#dee3db;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+       style="opacity:1;fill:#dee3db;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\ground.png"
+       inkscape:export-xdpi="450"
+       inkscape:export-ydpi="450" />
     <g
-       id="g4473">
+       id="g4473"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\pushWall.png"
+       inkscape:export-xdpi="450"
+       inkscape:export-ydpi="450">
       <rect
          y="108.87973"
          x="67.319992"
@@ -143,22 +152,31 @@
          style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
     </g>
     <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill-opacity:0;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;fill:#ffffff"
        id="rect4480"
        width="10"
        height="10"
        x="79.762573"
-       y="108.87973" />
+       y="108.87973"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\player.png"
+       inkscape:export-xdpi="450"
+       inkscape:export-ydpi="450" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 88.616072,111.98274 -0.691965,-0.42411 -0.803571,-1.02679 -1.026786,0.95983 -5.714285,4.91071 3.549107,-1.58482 2.165178,-0.067 1.584822,-2.74553 z"
        id="path4482"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\player.png"
+       inkscape:export-xdpi="450"
+       inkscape:export-ydpi="450" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 85.044643,114.92916 -0.580357,1.94197 1.004464,0.067"
        id="path4484"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccc" />
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\player.png"
+       inkscape:export-xdpi="450"
+       inkscape:export-ydpi="450" />
   </g>
 </svg>

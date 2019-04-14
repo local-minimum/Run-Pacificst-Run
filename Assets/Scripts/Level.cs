@@ -89,7 +89,6 @@ struct Movable
 
 public class Level : Singleton<Level>
 {
-
     List<Movable> movables = new List<Movable>();
 
     public void RegisterPlayer(PlayerController playerController)
@@ -98,7 +97,7 @@ public class Level : Singleton<Level>
         movables.Add(player);
         playerController.OnPlayerAction += PlayerController_OnPlayerAction;
     }
-    
+
     public void UnRegisterPlayer(PlayerController playerController)
     {
         movables.RemoveAll(m => m.who == playerController.gameObject);
@@ -107,7 +106,7 @@ public class Level : Singleton<Level>
 
     private void PlayerController_OnPlayerAction(int playerID, PlayerActionType actionType)
     {
-        for (int i=0, l=movables.Count; i<l; i++)
+        for (int i = 0, l = movables.Count; i < l; i++)
         {
             Movable m = movables[i];
             if (m.actor == Actor.PLAYER && m.id == playerID)
@@ -141,6 +140,7 @@ public class Level : Singleton<Level>
 
     private void Update()
     {
+        PlaceFloors();
         if (shouldMove) MovePlayers();
         if (shouldMoveEveryone) MoveOthers();
     }
@@ -148,7 +148,7 @@ public class Level : Singleton<Level>
     void MovePlayers()
     {
         int moves = 0;
-        for (int i=0, l=movables.Count(); i<l; i += 1)
+        for (int i = 0, l = movables.Count(); i < l; i += 1)
         {
             Movable m = movables[i];
             if (m.actor == Actor.PLAYER && m.WantsToMove)
@@ -192,16 +192,71 @@ public class Level : Singleton<Level>
     }
 
     bool IsOccupied(int x, int y, Actor actor)
-    {       
+    {
         //TODO: Return remaining obstacle
         return false;
     }
 
     [SerializeField]
     float gridSize = 1f;
+    public float GridSize { get => gridSize; }
 
     Vector2 GetPositionAt(int x, int y)
     {
         return new Vector2(gridSize * x, gridSize * y);
+    }
+
+    [SerializeField]
+    Sprite floor;
+    List<Transform> floors = new List<Transform>();
+    int floorIdx;
+
+    Transform GetFloorTransform()
+    {
+        Transform floor;
+
+        if (floorIdx < floors.Count())
+        {
+            floor = floors[floorIdx];
+        }
+        else
+        {
+            GameObject go = new GameObject("Floor");
+            go.transform.SetParent(transform);
+            SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = this.floor;
+            floor = go.transform;
+            floors.Add(floor);
+        }
+        floorIdx++;
+        floor.gameObject.SetActive(true);
+        return floor;
+    }
+
+    void DeactivateLostFloors()
+    {
+        for (int i=floorIdx, l=floors.Count(); i<l; i++)
+        {
+            floors[i].gameObject.SetActive(false);
+        }
+    }
+
+    void PlaceFloors()
+    {
+        floorIdx = 0;
+        Rect camRect = GameCamera.Instance.GetViewRect();        
+        int left = Mathf.FloorToInt(camRect.xMin);
+        int right = Mathf.CeilToInt(camRect.xMax);
+        int bottom = Mathf.FloorToInt(camRect.yMin);
+        int top = Mathf.CeilToInt(camRect.yMax);
+
+        for (int x=left; x<=right; x++)
+        {
+            for (int y=bottom; y<=top; y++)
+            {
+                Transform t = GetFloorTransform();
+                t.position = GetPositionAt(x, y);                
+            }
+        }
     }
 }
