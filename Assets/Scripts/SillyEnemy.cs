@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SillyEnemy : Mover
+public class SillyEnemy : Agent
 {
     int myMovableId;
 
     private void Awake()
     {
-        TypeOfMover = MoverType.MONSTER;
+        TypeOfMover = AgentType.MONSTER;
     }
 
     private void OnEnable()
     {
         GameClock.Instance.OnTick += HandleTick;
-        MoverID = Level.Instance.RegisterMover(this);
+        MoverID = Level.Instance.RegisterAgent(this);
     }
 
     private void OnDisable()
@@ -22,7 +22,7 @@ public class SillyEnemy : Mover
         if (GameClock.Instance)
             GameClock.Instance.OnTick -= HandleTick;
         if (Level.Instance)
-            Level.Instance.UnRegisterMover(this);
+            Level.Instance.UnRegisterAgent(this);
     }
 
     [SerializeField]
@@ -36,16 +36,16 @@ public class SillyEnemy : Mover
             if (m.Id == MoverID)
             {
                 Movable player = Level.Instance.GetPlayerClosestTo(m.x, m.y, activationRange);
-                if (player.actor == MoverType.PLAYER)
+                if (player.actor == AgentType.PLAYER)
                 {
                     int deltaX = player.x - m.x;
                     int deltaY = player.y - m.y;
                     if (Mathf.Abs(deltaX) < Mathf.Abs(deltaY))
                     {
-                        Emit(deltaY > 0 ? MoverActionType.North : MoverActionType.South);
+                        Emit(deltaY > 0 ? AgentActionType.North : AgentActionType.South);
                     } else
                     {
-                        Emit(deltaX > 0 ? MoverActionType.East : MoverActionType.West);
+                        Emit(deltaX > 0 ? AgentActionType.East : AgentActionType.West);
                     }
                 }
             }            

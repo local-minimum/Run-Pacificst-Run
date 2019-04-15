@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using LevelFeatureValue = System.UInt32;
 
 public enum FloorType { BASIC, MOVABLE, IMOVABLE };
 
@@ -23,14 +24,14 @@ public struct Movable
 {
     public int x;
     public int y;
-    int id;
+    readonly int id;
     public int Id { get => id; }
-    public MoverType actor;
+    public AgentType actor;
     public int actionX;
     public int actionY;
     public GameObject who;
 
-    public Movable(int x, int y, MoverType actor, int id, GameObject who)
+    public Movable(int x, int y, AgentType actor, int id, GameObject who)
     {
         this.x = x;
         this.y = y;
@@ -41,7 +42,7 @@ public struct Movable
         this.who = who;
     }
 
-    public Movable(int x, int y, MoverType actor, int id, GameObject who, int actionX, int actionY)
+    public Movable(int x, int y, AgentType actor, int id, GameObject who, int actionX, int actionY)
     {
         this.x = x;
         this.y = y;
@@ -52,22 +53,22 @@ public struct Movable
         this.who = who;
     }
 
-    public Movable Evolve(MoverActionType actionType)
+    public Movable Evolve(AgentActionType actionType)
     {
         int actionX = 0;
         int actionY = 0;
         switch (actionType)
         {
-            case MoverActionType.North:
+            case AgentActionType.North:
                 actionY = 1;
                 break;
-            case MoverActionType.East:
+            case AgentActionType.East:
                 actionX = 1;
                 break;
-            case MoverActionType.South:
+            case AgentActionType.South:
                 actionY = -1;
                 break;
-            case MoverActionType.West:
+            case AgentActionType.West:
                 actionX = -1;
                 break;
         }
@@ -115,28 +116,30 @@ public class Level : Singleton<Level>
     [SerializeField]
     List<Imovable> imovables = new List<Imovable>();
 
-    public int RegisterMover(Mover mover)
+    LevelFeatureValue[,] levelData;
+
+    public int RegisterAgent(Agent agent)
     {
         int id = nextMovableId;
-        nextMovableId++;
-        Movable player = new Movable(0, 0, mover.TypeOfMover, id, mover.gameObject);
-        movables.Add(player);
-        mover.OnAction += HandleMoverAction;
+        nextMovableId++;        
+        Movable movable = new Movable(0, 0, agent.TypeOfMover, id, agent.gameObject);
+        movables.Add(movable);
+        agent.OnAction += HandleAgentAction;
         return id;
     }
 
-    public void UnRegisterMover(Mover mover)
-    {
-        movables.RemoveAll(m => m.who == mover.gameObject);
-        mover.OnAction -= HandleMoverAction;
+    public void UnRegisterAgent(Agent agent)
+    {        
+        movables.RemoveAll(m => m.who == agent.gameObject);
+        agent.OnAction -= HandleAgentAction;
     }
 
-    private void HandleMoverAction(int moverId, MoverType moverType, MoverActionType actionType)
+    private void HandleAgentAction(int moverId, AgentType agentType, AgentActionType actionType)
     {
         for (int i = 0, l = movables.Count; i < l; i++)
         {
             Movable m = movables[i];
-            if (m.actor == moverType && m.Id == moverId)
+            if (m.actor == agentType && m.Id == moverId)
             {
                 movables[i] = m.Evolve(actionType);
                 return;
@@ -165,6 +168,11 @@ public class Level : Singleton<Level>
         shouldMoveEveryone = everyone;
     }
 
+    private void Start()
+    {
+        levelData = LevelDesigner.Generate(0);
+    }
+
     private void Update()
     {
         PlaceFloors();
@@ -178,7 +186,7 @@ public class Level : Singleton<Level>
         for (int i = 0, l = movables.Count(); i < l; i += 1)
         {
             Movable m = movables[i];
-            if (m.actor == MoverType.PLAYER && m.WantsToMove)
+            if (m.actor == AgentType.PLAYER && m.WantsToMove)
             {
                 if (Enact(m))
                 {
@@ -190,7 +198,6 @@ public class Level : Singleton<Level>
                 }
             }
         }
-        //Debug.Log(string.Format("{0} players moved", moves));
         shouldMove = false;
     }
 
@@ -213,17 +220,17 @@ public class Level : Singleton<Level>
         return false;
     }
 
-    void ResolveConflict(int x, int y, MoverType actor, GameObject who, int xDir, int yDir)
+    void ResolveConflict(int x, int y, AgentType actor, GameObject who, int xDir, int yDir)
     {
-        if (actor != MoverType.PLAYER) return;
+        if (actor != AgentType.PLAYER) return;
         for (int i=0, l=movables.Count(); i<l; i++)
         {
             Movable m = movables[i];
-            if (m.x == x && m.y == y && m.actor == MoverType.WALL)
+            if (m.x == x && m.y == y && m.actor == AgentType.WALL)
             {
                 int nextX = x + xDir;
                 int nextY = y + yDir;
-                if (!IsOccupied(nextX, nextY, MoverType.WALL))
+                if (!IsOccupied(nextX, nextY, AgentType.WALL))
                 {
                     movables[i] = m.Evolve(xDir, yDir).Enact();
                 }
@@ -232,7 +239,7 @@ public class Level : Singleton<Level>
         }
     }
 
-    bool IsOccupied(int x, int y, MoverType actor)
+    bool IsOccupied(int x, int y, AgentType actor)
     {
         if (imovables.Any(e => e.x == x && e.y == y)) return true;
         if (movables.Any(e => e.x == x && e.y == y)) return true;
@@ -259,7 +266,7 @@ public class Level : Singleton<Level>
     public Movable GetPlayerClosestTo(int x, int y, int maxDist=-1)
     {
         return movables
-            .Where(m => m.actor == MoverType.PLAYER)
+            .Where(m => m.actor == AgentType.PLAYER)
             .Select(m => new
             {
                 dist = Mathf.Abs(m.x - x) + Mathf.Abs(m.y - y),
@@ -337,7 +344,7 @@ public class Level : Singleton<Level>
                 if (imovables.Any(e => e.x == x && e.y == y))
                 {
                     floorType = FloorType.IMOVABLE;
-                } else if (movables.Any(e => e.x == x && e.y == y && e.actor == MoverType.WALL))
+                } else if (movables.Any(e => e.x == x && e.y == y && e.actor == AgentType.WALL))
                 {
                     floorType = FloorType.MOVABLE;
                 } else
