@@ -2,8 +2,10 @@
 
 Next:
 
-Do position of enemy not at 0, 0
-Do level move monsters
+* Grab spawn position of agents from level data
+  * Instantiate prefabs
+* Render Lvl based on generated data
+* Do level move monsters
 
 ## Ideas
 
