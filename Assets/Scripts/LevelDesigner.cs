@@ -17,7 +17,7 @@ public static class LevelDesigner
 
     static LevelFeatureValue[,] LevelHome()
     {
-        int width = 10;
+        int width = 12;
         int height = 9;
         LevelFeatureValue[,] lvl = new LevelFeatureValue[width, height];
         for (int x=0; x<width; x++)
@@ -31,9 +31,12 @@ public static class LevelDesigner
                 {
                     lvl[x, y] = LevelFeature.Ground(y == 3, y != 7, 0);
                 }
-                else if (x > 6 && y == 5)
+                else if (x > 6 && y == 4)
                 {
                     lvl[x, y] = LevelFeature.Ground(false, true, 0);
+                } else
+                {
+                    lvl[x, y] = LevelFeature.Ground(false, false, 0);
                 }
             }
         }

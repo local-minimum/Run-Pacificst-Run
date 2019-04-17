@@ -5,8 +5,6 @@ using System.Linq;
 using System;
 using LevelFeatureValue = System.UInt32;
 
-public enum FloorType { BASIC, MOVABLE, IMOVABLE };
-
 [Serializable]
 struct Imovable
 {
@@ -111,10 +109,7 @@ public class Level : Singleton<Level>
 {
     static int nextMovableId = 0;
 
-    [SerializeField]
     List<Movable> movables = new List<Movable>();
-    [SerializeField]
-    List<Imovable> imovables = new List<Imovable>();
 
     LevelFeatureValue[,] levelData;
 
@@ -220,33 +215,29 @@ public class Level : Singleton<Level>
         return false;
     }
 
+    bool IsInsideLevel(int x, int y)
+    {
+        return x >= 0 && y >= 0 && x < levelData.GetLength(0) && y < levelData.GetLength(1);
+    }
+
     void ResolveConflict(int x, int y, AgentType actor, GameObject who, int xDir, int yDir)
     {
         if (actor != AgentType.PLAYER) return;
-        for (int i=0, l=movables.Count(); i<l; i++)
+        if (LevelFeature.FulfillsSemanticGroundMask(true, true, levelData[x, y]))
         {
-            Movable m = movables[i];
-            if (m.x == x && m.y == y && m.actor == AgentType.WALL)
-            {
-                int nextX = x + xDir;
-                int nextY = y + yDir;
-                if (!IsOccupied(nextX, nextY, AgentType.WALL))
+            if (IsInsideLevel(x + xDir, y + yDir)) {
+                if (LevelFeature.IsVacant(levelData[x + xDir, y + yDir]))
                 {
-                    movables[i] = m.Evolve(xDir, yDir).Enact();
+                    levelData[x, y] = LevelFeature.EvolveGround(false, false, levelData[x, y]);
+                    levelData[x + xDir, y + yDir] = LevelFeature.EvolveGround(true, true, levelData[x + xDir, y + yDir]);
                 }
-                return;
             }
         }
     }
 
     bool IsOccupied(int x, int y, AgentType actor)
     {
-        if (imovables.Any(e => e.x == x && e.y == y)) return true;
-        if (movables.Any(e => e.x == x && e.y == y)) return true;
-
-        //TODO: Block if actor is wall and object on pos
-
-        return false;
+        return LevelFeature.IsBlocked(levelData[x, y]);
     }
     
     [SerializeField]
@@ -288,7 +279,7 @@ public class Level : Singleton<Level>
     List<Transform> floors = new List<Transform>();
     int floorIdx;
 
-    Transform GetFloorTransform(FloorType floorType)
+    Transform GetFloorTransform(GroundType floorType)
     {
         Transform floor;
 
@@ -304,13 +295,13 @@ public class Level : Singleton<Level>
             floor = go.transform;
             floors.Add(floor);
         }
-        if (floorType == FloorType.BASIC)
+        if (floorType == GroundType.BASIC)
         {
             floor.GetComponent<SpriteRenderer>().sprite = floorBasic;
-        } else if (floorType == FloorType.IMOVABLE)
+        } else if (floorType == GroundType.BLOCKING_IMOVABLE)
         {
             floor.GetComponent<SpriteRenderer>().sprite = wallImovable;
-        } else if (floorType == FloorType.MOVABLE)
+        } else if (floorType == GroundType.BLOCKING_MOVABLE)
         {
             floor.GetComponent<SpriteRenderer>().sprite = wallMovable;
         }
@@ -335,24 +326,18 @@ public class Level : Singleton<Level>
         int right = Mathf.CeilToInt(camRect.xMax);
         int bottom = Mathf.FloorToInt(camRect.yMin);
         int top = Mathf.CeilToInt(camRect.yMax);
-        FloorType floorType;
+        GroundType floorType;
 
         for (int x=left; x<=right; x++)
         {
             for (int y=bottom; y<=top; y++)
             {
-                if (imovables.Any(e => e.x == x && e.y == y))
+                if (IsInsideLevel(x, y))
                 {
-                    floorType = FloorType.IMOVABLE;
-                } else if (movables.Any(e => e.x == x && e.y == y && e.actor == AgentType.WALL))
-                {
-                    floorType = FloorType.MOVABLE;
-                } else
-                {
-                    floorType = FloorType.BASIC;
+                    floorType = LevelFeature.GetGroundType(levelData[x, y]);
+                    Transform t = GetFloorTransform(floorType);
+                    t.position = GetPositionAt(x, y);
                 }
-                Transform t = GetFloorTransform(floorType);
-                t.position = GetPositionAt(x, y);
             }
         }
     }
