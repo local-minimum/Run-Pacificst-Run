@@ -43,12 +43,12 @@ public static class LevelDesigner
         switch (Random.Range(0, 1))
         {
             case 0:
-                lvl[8, 3] |= LevelFeature.Agent(true, false, 0);
-                lvl[8, 7] |= LevelFeature.Agent(false, false, 1);
+                lvl[8, 3] = LevelFeature.SetAgent(true, false, 0, lvl[8, 3]);
+                lvl[8, 7] = LevelFeature.SetAgent(false, false, 1, lvl[8, 7]);
                 break;
             case 1:
-                lvl[8, 7] |= LevelFeature.Agent(true, false, 0);
-                lvl[8, 3] |= LevelFeature.Agent(false, false, 1);
+                lvl[8, 7] = LevelFeature.SetAgent(true, false, 0, lvl[8, 7]);
+                lvl[8, 3] = LevelFeature.SetAgent(false, false, 1, lvl[8, 3]);
                 break;
         }
         return lvl;

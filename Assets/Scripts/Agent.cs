@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum AgentType { NONE, PLAYER, MONSTER, NPC, WALL };
 public enum AgentActionType { Rest, North, East, South, West };
 
-public delegate void MoverActionEvent(int playerID, AgentType moverType, AgentActionType actionType);
+public delegate void MoverActionEvent(ushort agentID, AgentType agentType, AgentActionType actionType);
 
 
 public class Agent : MonoBehaviour
@@ -14,14 +13,21 @@ public class Agent : MonoBehaviour
 
     protected void Emit(AgentActionType action)
     {
-        OnAction?.Invoke(MoverID, TypeOfMover, action);
+        OnAction?.Invoke(AgentID, TypeOfAgent, action);
     }
 
-    public AgentType TypeOfMover { get; protected set; }
-    public int MoverID { get; protected set; }
+    public AgentType TypeOfAgent { get; protected set; }
+    public ushort AgentID { get; protected set; }
 
     public void Move(Vector2 to)
     {
         transform.position = to;
     }
+
+    public void Setup(AgentType agentType, ushort agentId)
+    {
+        TypeOfAgent = agentType;
+        AgentID = agentId;
+    }
+
 }

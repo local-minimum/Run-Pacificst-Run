@@ -4,17 +4,15 @@ using UnityEngine;
 
 public class SillyEnemy : Agent
 {
-    int myMovableId;
-
     private void Awake()
     {
-        TypeOfMover = AgentType.MONSTER;
+        TypeOfAgent = AgentType.MONSTER;
     }
 
     private void OnEnable()
     {
         GameClock.Instance.OnTick += HandleTick;
-        MoverID = Level.Instance.RegisterAgent(this);
+        Level.Instance.RegisterAgent(this);
     }
 
     private void OnDisable()
@@ -32,23 +30,21 @@ public class SillyEnemy : Agent
     {
         if (everyone)
         {
-            Movable m = Level.Instance.GetMovableById(myMovableId);
-            if (m.Id == MoverID)
+            Movable m = Level.Instance.GetMovableById(AgentID);
+            Movable player = Level.Instance.GetPlayerClosestTo(m.x, m.y, activationRange);
+            if (player.agentType == AgentType.PLAYER)
             {
-                Movable player = Level.Instance.GetPlayerClosestTo(m.x, m.y, activationRange);
-                if (player.actor == AgentType.PLAYER)
+                int deltaX = player.x - m.x;
+                int deltaY = player.y - m.y;
+                if (Mathf.Abs(deltaX) < Mathf.Abs(deltaY))
                 {
-                    int deltaX = player.x - m.x;
-                    int deltaY = player.y - m.y;
-                    if (Mathf.Abs(deltaX) < Mathf.Abs(deltaY))
-                    {
-                        Emit(deltaY > 0 ? AgentActionType.North : AgentActionType.South);
-                    } else
-                    {
-                        Emit(deltaX > 0 ? AgentActionType.East : AgentActionType.West);
-                    }
+                    Emit(deltaY > 0 ? AgentActionType.North : AgentActionType.South);
+                } else
+                {
+                    Emit(deltaX > 0 ? AgentActionType.East : AgentActionType.West);
                 }
-            }            
+            }
+          
         }
     }
 }

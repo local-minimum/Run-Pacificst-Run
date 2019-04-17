@@ -5,7 +5,7 @@ using UnityEngine;
 using LevelFeatureValue = System.UInt32;
 
 public enum GroundType { BASIC, BLOCKING_MOVABLE, BLOCKING_IMOVABLE, NONBLOCKING_MOVABLE };
-
+public enum AgentType { PLAYER, MONSTER, NPC, ENEMY_PLAYER };
 
 public static class LevelFeature
 {
@@ -62,7 +62,7 @@ public static class LevelFeature
 
     static readonly LevelFeatureValue NotGroundMask = 0b00000000000011111111111111111111;
     //                                                  0   4   8   12  16  20  24  28  32
-    public static LevelFeatureValue EvolveGround(bool movable, bool obstruction, LevelFeatureValue value)
+    public static LevelFeatureValue SetGround(bool movable, bool obstruction, LevelFeatureValue value)
     {
         LevelFeatureValue semanticGround = (movable ? One : Zero) | (obstruction ? One << 1 : Zero);
         LevelFeatureValue groundId = GroundIdMask & value;
@@ -80,21 +80,61 @@ public static class LevelFeature
     #endregion
 
     #region AGENTS
-    static readonly ushort FirstAgentBit = 24;
+    static readonly ushort FirstAgentIdBit = 27;
+    static readonly ushort AgentIdBits = 5;    
+    static readonly LevelFeatureValue NotAgentMask =  0b11111111111111111111111100000000;
+    //                                                  0   4   8   12  16  20  24  28  32
+    static readonly LevelFeatureValue HasAgentMask =  0b00000000000000000000000010000000;
+    static readonly LevelFeatureValue IsPlayerMask =  0b00000000000000000000000001000000;
+    static readonly LevelFeatureValue IsHostileMask = 0b00000000000000000000000000100000;
+    static readonly LevelFeatureValue AgentIdMask =   0b00000000000000000000000000011111;
+
     public static bool HasAgent(LevelFeatureValue value)
     {
-        return ((One << FirstAgentBit) & value) > 0;
+        return (HasAgentMask & value) == HasAgentMask;
     }
 
-    static readonly ushort AgentIdBits = 5;
-    public static LevelFeatureValue Agent(bool isPlayer, bool conversable, ushort identifier)
+    public static LevelFeatureValue SetAgent(bool isPlayer, bool isHostile, ushort identifier, LevelFeatureValue value)
     {
         if (identifier > One << AgentIdBits)
         {
             throw new System.NotSupportedException($"The identifier must be in the range 0 - 5 (not {identifier})");
         }
-        return (One << FirstAgentBit) | (isPlayer ? One << (FirstAgentBit + 1) : Zero) | (conversable ? One << (FirstAgentBit + 2) : Zero) | ((LevelFeatureValue)identifier << (FirstAgentBit + 3));
+        LevelFeatureValue agent = HasAgentMask | (isPlayer ? IsPlayerMask : Zero) | (isHostile ? IsHostileMask : Zero) | ((LevelFeatureValue)identifier << (FirstAgentIdBit));
+        LevelFeatureValue notagent = NotAgentMask & value;
+        return agent | notagent;
     }
+
+    public static LevelFeatureValue ClearAgent(LevelFeatureValue value)
+    {
+        return value & NotAgentMask;
+    }
+
+    public static AgentType GetAgentType(LevelFeatureValue value)
+    {
+        bool hasPlayer = (IsPlayerMask & value) == IsPlayerMask;
+        bool isHostile = (IsHostileMask & value) == IsHostileMask;
+        if (hasPlayer)
+        {
+            return isHostile ? AgentType.ENEMY_PLAYER : AgentType.PLAYER;
+        } else
+        {
+            return isHostile ? AgentType.MONSTER : AgentType.NPC;
+        }
+    }
+
+    public static ushort GetAgentId(LevelFeatureValue value)
+    {
+        return (ushort) ((value & AgentIdMask) >> FirstAgentIdBit);
+    }
+
+    public static LevelFeatureValue CopyAgent(LevelFeatureValue from, LevelFeatureValue to)
+    {
+        LevelFeatureValue agent = (~NotAgentMask) & from;
+        LevelFeatureValue notAgent = NotAgentMask & to;
+        return notAgent | agent;
+    }
+
     #endregion
 
     #region MIXED

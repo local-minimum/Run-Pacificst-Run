@@ -10,14 +10,14 @@ public class PlayerController : Agent
 
     private void Awake()
     {
-        TypeOfMover = AgentType.PLAYER;
+        TypeOfAgent = AgentType.PLAYER;
     }
 
     private void OnEnable()
     {
         GameClock.Instance.OnTick += PlayerController_OnTick;
         GameInput.Instance.OnInput += PlayerController_OnInput;
-        MoverID = Level.Instance.RegisterAgent(this);
+        Level.Instance.RegisterAgent(this);
         GameCamera.Instance.RegisterPlayer(this);
     }
 

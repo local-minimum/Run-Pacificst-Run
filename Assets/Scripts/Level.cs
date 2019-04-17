@@ -2,50 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using System;
 using LevelFeatureValue = System.UInt32;
 
-[Serializable]
-struct Imovable
-{
-    public int x;
-    public int y;
-    public Imovable(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-}
 
-[Serializable]
 public struct Movable
 {
     public int x;
     public int y;
-    readonly int id;
-    public int Id { get => id; }
-    public AgentType actor;
+    public AgentType agentType;
     public int actionX;
     public int actionY;
     public GameObject who;
 
-    public Movable(int x, int y, AgentType actor, int id, GameObject who)
+    public Movable(int x, int y, AgentType agentType, GameObject who)
     {
         this.x = x;
         this.y = y;
-        this.id = id;
-        this.actor = actor;
+        this.agentType = agentType;
         actionX = 0;
         actionY = 0;
         this.who = who;
     }
 
-    public Movable(int x, int y, AgentType actor, int id, GameObject who, int actionX, int actionY)
+    public Movable(int x, int y, AgentType agentType, GameObject who, int actionX, int actionY)
     {
         this.x = x;
         this.y = y;
-        this.id = id;
-        this.actor = actor;
+        this.agentType = agentType;
         this.actionX = actionX;
         this.actionY = actionY;
         this.who = who;
@@ -70,22 +53,22 @@ public struct Movable
                 actionX = -1;
                 break;
         }
-        return new Movable(x, y, actor, id, who, actionX, actionY);
+        return new Movable(x, y, agentType, who, actionX, actionY);
     }
 
     public Movable Evolve(int actionX, int actionY)
     {
-        return new Movable(x, y, actor, id, who, actionX, actionY);
+        return new Movable(x, y, agentType, who, actionX, actionY);
     }
 
     public Movable Reset()
     {
-        return new Movable(x, y, actor, id, who, 0, 0);
+        return new Movable(x, y, agentType, who, 0, 0);
     }
 
     public Movable Enact()
     {
-        return new Movable(NextX, NextY, actor, id, who, 0, 0);
+        return new Movable(NextX, NextY, agentType, who, 0, 0);
     }
 
     public int NextX
@@ -107,40 +90,35 @@ public struct Movable
 
 public class Level : Singleton<Level>
 {
-    static int nextMovableId = 0;
-
-    List<Movable> movables = new List<Movable>();
+    Dictionary<ushort, Movable> movables = new Dictionary<ushort, Movable>();
 
     LevelFeatureValue[,] levelData;
 
-    public int RegisterAgent(Agent agent)
+    [SerializeField]
+    PlayerController playerController;
+    [SerializeField]
+    SillyEnemy enemyPrefab;
+
+    public void RegisterAgent(Agent agent)
     {
-        int id = nextMovableId;
-        nextMovableId++;        
-        Movable movable = new Movable(0, 0, agent.TypeOfMover, id, agent.gameObject);
-        movables.Add(movable);
         agent.OnAction += HandleAgentAction;
-        return id;
     }
 
     public void UnRegisterAgent(Agent agent)
     {        
-        movables.RemoveAll(m => m.who == agent.gameObject);
         agent.OnAction -= HandleAgentAction;
+        movables.Remove(agent.AgentID);
     }
 
-    private void HandleAgentAction(int moverId, AgentType agentType, AgentActionType actionType)
+    private void HandleAgentAction(ushort agentId, AgentType agentType, AgentActionType actionType)
     {
-        for (int i = 0, l = movables.Count; i < l; i++)
+        if (movables.Keys.Contains(agentId))
         {
-            Movable m = movables[i];
-            if (m.actor == agentType && m.Id == moverId)
-            {
-                movables[i] = m.Evolve(actionType);
-                return;
-            }
+            movables[agentId] = movables[agentId].Evolve(actionType);
+        } else
+        {        
+            Debug.LogWarning(string.Format("Could not find player id {0}", agentId));
         }
-        Debug.LogWarning(string.Format("Could not find player id {0}", moverId));
     }
 
     private void OnEnable()
@@ -163,9 +141,36 @@ public class Level : Singleton<Level>
         shouldMoveEveryone = everyone;
     }
 
+
     private void Start()
     {
         levelData = LevelDesigner.Generate(0);
+        PopulateAgents();
+    }
+
+    private void PopulateAgents()
+    {
+        for (int x=0, width=levelData.GetLength(0); x<width; x++)
+        {
+            for (int y=0, height=levelData.GetLength(1); y<height; y++)
+            {
+                LevelFeatureValue val = levelData[x, y];
+                if (LevelFeature.HasAgent(val))
+                {
+                    ushort agentId = LevelFeature.GetAgentId(val);
+                    switch (LevelFeature.GetAgentType(val)) {
+                        case AgentType.PLAYER:                            
+                            PlayerController player = Instantiate<PlayerController>(playerController);
+                            movables[agentId] = new Movable(x, y, AgentType.PLAYER, player.gameObject);
+                            player.Setup(AgentType.PLAYER, agentId);
+                            player.Move(GetPositionAt(x, y));
+                            break;
+                        case AgentType.MONSTER:
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     private void Update()
@@ -178,18 +183,19 @@ public class Level : Singleton<Level>
     void MovePlayers()
     {
         int moves = 0;
-        for (int i = 0, l = movables.Count(); i < l; i += 1)
-        {
-            Movable m = movables[i];
-            if (m.actor == AgentType.PLAYER && m.WantsToMove)
+        
+        foreach (KeyValuePair<ushort, Movable> kvp in movables)
+        {            
+            if (kvp.Value.agentType == AgentType.PLAYER && kvp.Value.WantsToMove)
             {
-                if (Enact(m))
+                if (Enact(kvp.Value, kvp.Key))
                 {
                     moves += 1;
-                    movables[i] = m.Enact();
+                    movables[kvp.Key] = kvp.Value.Enact();
+
                 } else
                 {
-                    movables[i] = m.Reset();
+                    movables[kvp.Key] = kvp.Value.Reset();
                 }
             }
         }
@@ -201,14 +207,16 @@ public class Level : Singleton<Level>
         shouldMoveEveryone = false;
     }
 
-    bool Enact(Movable m)
+    bool Enact(Movable m, ushort agentId)
     {
         int nextX = m.NextX;
         int nextY = m.NextY;
-        ResolveConflict(nextX, nextY, m.actor, m.who, m.actionX, m.actionY);
-        bool occupied = IsOccupied(nextX, nextY, m.actor);
+        ResolveConflict(nextX, nextY, m.agentType, m.who, m.actionX, m.actionY);
+        bool occupied = IsOccupied(nextX, nextY, m.agentType);
         if (!occupied)
         {
+            levelData[nextX, nextY] = LevelFeature.CopyAgent(levelData[m.x, m.y], levelData[nextX, nextY]);
+            levelData[m.x, m.y] = LevelFeature.ClearAgent(levelData[m.x, m.y]);
             m.who.SendMessage("Move", GetPositionAt(nextX, nextY), SendMessageOptions.RequireReceiver);
             return true;
         }
@@ -228,8 +236,8 @@ public class Level : Singleton<Level>
             if (IsInsideLevel(x + xDir, y + yDir)) {
                 if (LevelFeature.IsVacant(levelData[x + xDir, y + yDir]))
                 {
-                    levelData[x, y] = LevelFeature.EvolveGround(false, false, levelData[x, y]);
-                    levelData[x + xDir, y + yDir] = LevelFeature.EvolveGround(true, true, levelData[x + xDir, y + yDir]);
+                    levelData[x, y] = LevelFeature.SetGround(false, false, levelData[x, y]);
+                    levelData[x + xDir, y + yDir] = LevelFeature.SetGround(true, true, levelData[x + xDir, y + yDir]);
                 }
             }
         }
@@ -244,9 +252,9 @@ public class Level : Singleton<Level>
     float gridSize = 1f;
     public float GridSize { get => gridSize; }
 
-    public Movable GetMovableById(int id)
+    public Movable GetMovableById(ushort id)
     {
-        return movables.FirstOrDefault(m => m.Id == id);
+        return movables[id];
     }
 
     Vector2 GetPositionAt(int x, int y)
@@ -257,11 +265,11 @@ public class Level : Singleton<Level>
     public Movable GetPlayerClosestTo(int x, int y, int maxDist=-1)
     {
         return movables
-            .Where(m => m.actor == AgentType.PLAYER)
+            .Where(m => m.Value.agentType == AgentType.PLAYER)
             .Select(m => new
             {
-                dist = Mathf.Abs(m.x - x) + Mathf.Abs(m.y - y),
-                movable = m,
+                dist = Mathf.Abs(m.Value.x - x) + Mathf.Abs(m.Value.y - y),
+                movable = m.Value,
             })
             .Where(o => o.dist < maxDist || maxDist < 0)
             .OrderBy(o => o.dist)
