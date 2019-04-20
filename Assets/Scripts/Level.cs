@@ -183,19 +183,22 @@ public class Level : Singleton<Level>
     void MovePlayers()
     {
         int moves = 0;
-        
-        foreach (KeyValuePair<ushort, Movable> kvp in movables)
-        {            
-            if (kvp.Value.agentType == AgentType.PLAYER && kvp.Value.WantsToMove)
+        ushort[] keys = movables.Keys.ToArray();
+
+        for (int i=0, l=keys.Length; i<l; i++)
+        {
+            ushort key = keys[i];
+            Movable m = movables[key];
+            if (m.agentType == AgentType.PLAYER && m.WantsToMove)
             {
-                if (Enact(kvp.Value, kvp.Key))
+                if (Enact(m, key))
                 {
                     moves += 1;
-                    movables[kvp.Key] = kvp.Value.Enact();
+                    movables[key] = m.Enact();
 
                 } else
                 {
-                    movables[kvp.Key] = kvp.Value.Reset();
+                    movables[key] = m.Reset();
                 }
             }
         }

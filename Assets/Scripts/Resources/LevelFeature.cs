@@ -13,7 +13,15 @@ public static class LevelFeature
     static readonly LevelFeatureValue Zero = 0;
 
     #region GROUND
+    static readonly LevelFeatureValue GroundMovableMask =     0b10000000000000000000000000000000;
+    static readonly LevelFeatureValue GroundObstructionMask = 0b01000000000000000000000000000000;
+    static readonly LevelFeatureValue SemanticGroundMatch =   0b11000000000000000000000000000000;
+    static readonly LevelFeatureValue GroundIdMask =          0b00111000000000000000000000000000;
+    //                                                          0   4   8   12  16  20  24  28  32
+    //                                                             28  24  20  16  12  8   4   0
+
     static readonly ushort GroundIdBits = 3;
+    static readonly ushort GroundFirstIdBit = 27;
 
     public static LevelFeatureValue Ground(bool movable, bool obstruction, ushort identifier)
     {
@@ -21,28 +29,25 @@ public static class LevelFeature
         {
             throw new System.NotSupportedException($"The identifier must be in the range 0 - 5 (not {identifier})");
         }
-        return (movable ? One : Zero) | (obstruction ? One << 1 : Zero) | ((LevelFeatureValue)identifier << 2);
+        return (movable ? GroundMovableMask : Zero) | (obstruction ? GroundObstructionMask : Zero) | ((LevelFeatureValue)identifier << GroundFirstIdBit);
     }
-
-    static readonly LevelFeatureValue SemanticGroundMatch = 0b11;
 
     public static bool FulfillsSemanticGroundMask(bool movable, bool obstruction, LevelFeatureValue value)
     {
-        LevelFeatureValue mask = (movable ? One : Zero) | (obstruction ? One << 1 : Zero);
+        LevelFeatureValue mask = (movable ? GroundMovableMask : Zero) | (obstruction ? GroundObstructionMask : Zero);
         return ((~(mask ^ value)) & SemanticGroundMatch) == SemanticGroundMatch;
     }
 
-    static readonly LevelFeatureValue ObstructionMask = 0b01;
     public static bool IsBlocked(LevelFeatureValue value) 
     {
         //TODO: Could be blocked by object
-        return (value & ObstructionMask) == ObstructionMask;
+        return (value & GroundObstructionMask) == GroundObstructionMask;
     }
 
     public static GroundType GetGroundType(LevelFeatureValue value)
     {
-        bool movable = (One & value) == One;
-        bool obstruction = ((One << 1) & value) == (One << 1);
+        bool movable = (GroundMovableMask & value) == GroundMovableMask;
+        bool obstruction = (GroundObstructionMask & value) == GroundObstructionMask;
         if (movable)
         {
             return obstruction ? GroundType.BLOCKING_MOVABLE : GroundType.NONBLOCKING_MOVABLE;
@@ -52,11 +57,9 @@ public static class LevelFeature
         }
     }
 
-    static readonly LevelFeatureValue GroundIdMask = 0b00111;
-
-    public static bool FullfillsGroundMask(ushort identifier, LevelFeatureValue value)
+    public static bool HasGroundId(ushort identifier, LevelFeatureValue value)
     {
-        LevelFeatureValue mask = (((LevelFeatureValue)identifier) << 2);
+        LevelFeatureValue mask = (((LevelFeatureValue)identifier) << GroundFirstIdBit);
         return ((~(mask ^ value)) & GroundIdMask) == GroundIdMask;
     }
 
@@ -64,23 +67,27 @@ public static class LevelFeature
     //                                                  0   4   8   12  16  20  24  28  32
     public static LevelFeatureValue SetGround(bool movable, bool obstruction, LevelFeatureValue value)
     {
-        LevelFeatureValue semanticGround = (movable ? One : Zero) | (obstruction ? One << 1 : Zero);
+        LevelFeatureValue semanticGround = (movable ? GroundMovableMask : Zero) | (obstruction ? GroundObstructionMask : Zero);
         LevelFeatureValue groundId = GroundIdMask & value;
         LevelFeatureValue nonground = value & NotGroundMask;
         return semanticGround | groundId | nonground;
     }
     #endregion
 
-    #region OBJECTS
-    static readonly ushort FirstObjectBit = 12;
+    #region OBJECTS    
+    static readonly LevelFeatureValue ObjectMask =    0b00000000000011111111111100000000;
+    static readonly LevelFeatureValue HasObjectMask = 0b00000000000010000000000000000000;
+    //                                                  0   4   8   12  16  20  24  28  32
+    //                                                     28  24  20  16  12  8   4   0
+    
     public static bool HasObject(LevelFeatureValue value)
     {
-        return ((One << FirstObjectBit) & value) > 0;
+        return (HasObjectMask & value) == HasObjectMask;
     }
     #endregion
 
     #region AGENTS
-    static readonly ushort FirstAgentIdBit = 27;
+    static readonly ushort FirstAgentIdBit = 0;
     static readonly ushort AgentIdBits = 5;    
     static readonly LevelFeatureValue NotAgentMask =  0b11111111111111111111111100000000;
     //                                                  0   4   8   12  16  20  24  28  32
@@ -98,7 +105,7 @@ public static class LevelFeature
     {
         if (identifier > One << AgentIdBits)
         {
-            throw new System.NotSupportedException($"The identifier must be in the range 0 - 5 (not {identifier})");
+            throw new System.NotSupportedException($"The identifier must be in the range 0 - {One << AgentIdBits} (not {identifier})");
         }
         LevelFeatureValue agent = HasAgentMask | (isPlayer ? IsPlayerMask : Zero) | (isHostile ? IsHostileMask : Zero) | ((LevelFeatureValue)identifier << (FirstAgentIdBit));
         LevelFeatureValue notagent = NotAgentMask & value;
