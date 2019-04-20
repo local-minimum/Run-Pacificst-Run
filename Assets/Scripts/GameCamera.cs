@@ -20,6 +20,35 @@ public class GameCamera : Singleton<GameCamera>
         return new Rect(lowerLeft.x - buffer, lowerLeft.y - buffer, screenSize.x + 2 * buffer, screenSize.y + 2 * buffer);
     }
 
+    private void OnEnable()
+    {
+        Level.Instance.OnLevelEvent += Instance_OnLevelEvent;
+    }
+
+    private void OnDisable()
+    {
+        if (Level.Instance) Level.Instance.OnLevelEvent -= Instance_OnLevelEvent;
+    }
+
+    private void Instance_OnLevelEvent(LevelEventType eventType)
+    {
+        switch (eventType)
+        {
+            case LevelEventType.LOADED:
+                CenterOnPlayer();
+                break;
+        }
+        
+    }
+
+    void CenterOnPlayer()
+    {
+        if (playerTransform == null) return;
+        Vector3 offset = playerTransform.position - transform.position;
+        offset.z = 0;
+        transform.Translate(offset);
+    }
+
     Transform playerTransform;
 
     public void RegisterPlayer(PlayerController player)

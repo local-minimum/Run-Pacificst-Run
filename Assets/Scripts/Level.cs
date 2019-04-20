@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Linq;
 using LevelFeatureValue = System.UInt32;
 
+public enum LevelEventType {LOADED};
+public delegate void LevelEvent(LevelEventType eventType);
 
 public struct Movable
 {
@@ -91,7 +93,7 @@ public struct Movable
 public class Level : Singleton<Level>
 {
     Dictionary<ushort, Movable> movables = new Dictionary<ushort, Movable>();
-
+    public event LevelEvent OnLevelEvent;
     LevelFeatureValue[,] levelData;
 
     [SerializeField]
@@ -146,6 +148,7 @@ public class Level : Singleton<Level>
     {
         levelData = LevelDesigner.Generate(0);
         PopulateAgents();
+        OnLevelEvent?.Invoke(LevelEventType.LOADED);
     }
 
     private void PopulateAgents()
