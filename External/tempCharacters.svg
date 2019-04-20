@@ -55,8 +55,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="22.4"
-     inkscape:cx="82.886309"
-     inkscape:cy="932.30303"
+     inkscape:cx="52.990223"
+     inkscape:cy="931.81046"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -73,7 +73,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -197,5 +197,30 @@
        inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\enemy.png"
        inkscape:export-xdpi="450"
        inkscape:export-ydpi="450" />
+    <rect
+       inkscape:export-ydpi="450"
+       inkscape:export-xdpi="450"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\lvlEnd.png"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4161"
+       width="10"
+       height="10"
+       x="54.066814"
+       y="122.58509" />
+    <g
+       id="g4170">
+      <circle
+         r="1.4508928"
+         cy="127.58509"
+         cx="59.066814"
+         id="path4166"
+         style="opacity:1;fill:none;fill-opacity:0;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <circle
+         style="opacity:1;fill:none;fill-opacity:0;stroke:#000000;stroke-width:1.05118108;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="circle4168"
+         cx="59.066814"
+         cy="127.58509"
+         r="3.0503023" />
+    </g>
   </g>
 </svg>

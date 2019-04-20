@@ -40,7 +40,7 @@ public static class LevelDesigner
                 }
             }
         }
-        switch (Random.Range(0, 1))
+        switch (Random.Range(0, 2))
         {
             case 0:
                 lvl[8, 3] = LevelFeature.SetAgent(true, false, 0, lvl[8, 3]);
