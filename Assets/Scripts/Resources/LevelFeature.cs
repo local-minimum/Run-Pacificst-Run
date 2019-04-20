@@ -38,12 +38,6 @@ public static class LevelFeature
         return ((~(mask ^ value)) & SemanticGroundMatch) == SemanticGroundMatch;
     }
 
-    public static bool IsBlocked(LevelFeatureValue value) 
-    {
-        //TODO: Could be blocked by object
-        return (value & GroundObstructionMask) == GroundObstructionMask;
-    }
-
     public static GroundType GetGroundType(LevelFeatureValue value)
     {
         bool movable = (GroundMovableMask & value) == GroundMovableMask;
@@ -147,8 +141,16 @@ public static class LevelFeature
     #region MIXED
     public static bool IsVacant(LevelFeatureValue value)
     {
-        return !IsBlocked(value) && !HasObject(value) && !HasAgent(value);
+        return !IsBlocked(value) && !HasObject(value);
     }
+
+    public static bool IsBlocked(LevelFeatureValue value)
+    {
+        //TODO: Could be blocked by object
+        bool groundBlocked = (value & GroundObstructionMask) == GroundObstructionMask;
+        return groundBlocked || HasAgent(value);
+    }
+
     #endregion
 }
 

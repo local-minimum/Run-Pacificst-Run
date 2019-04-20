@@ -161,14 +161,19 @@ public class Level : Singleton<Level>
                 if (LevelFeature.HasAgent(val))
                 {
                     ushort agentId = LevelFeature.GetAgentId(val);
+                    Debug.Log($"Agent {agentId} on {x} {y} of type {LevelFeature.GetAgentType(val)}");
                     switch (LevelFeature.GetAgentType(val)) {
                         case AgentType.PLAYER:                            
-                            PlayerController player = Instantiate<PlayerController>(playerController);
+                            PlayerController player = Instantiate(playerController);
                             movables[agentId] = new Movable(x, y, AgentType.PLAYER, player.gameObject);
                             player.Setup(AgentType.PLAYER, agentId);
                             player.Move(GetPositionAt(x, y));
                             break;
-                        case AgentType.MONSTER:
+                        case AgentType.MONSTER:                            
+                            SillyEnemy enemy = Instantiate(enemyPrefab);
+                            movables[agentId] = new Movable(x, y, AgentType.MONSTER, enemy.gameObject);
+                            enemy.Setup(AgentType.MONSTER, agentId);
+                            enemy.Move(GetPositionAt(x, y));
                             break;
                     }
                 }

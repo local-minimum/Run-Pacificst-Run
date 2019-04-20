@@ -44,11 +44,11 @@ public static class LevelDesigner
         {
             case 0:
                 lvl[8, 3] = LevelFeature.SetAgent(true, false, 0, lvl[8, 3]);
-                lvl[8, 7] = LevelFeature.SetAgent(false, false, 1, lvl[8, 7]);
+                lvl[8, 7] = LevelFeature.SetAgent(false, true, 1, lvl[8, 7]);
                 break;
             case 1:
                 lvl[8, 7] = LevelFeature.SetAgent(true, false, 0, lvl[8, 7]);
-                lvl[8, 3] = LevelFeature.SetAgent(false, false, 1, lvl[8, 3]);
+                lvl[8, 3] = LevelFeature.SetAgent(false, true, 1, lvl[8, 3]);
                 break;
         }
         return lvl;
