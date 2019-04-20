@@ -29,7 +29,7 @@ public static class LevelDesigner
                     lvl[x, y] = LevelFeature.Ground(false, true, 0);
                 } else if (x == 6)
                 {
-                    lvl[x, y] = LevelFeature.Ground(y == 3, y != 7, 0);
+                    lvl[x, y] = LevelFeature.Ground(y == 2, y != 6, 0);
                 }
                 else if (x > 6 && y == 4)
                 {

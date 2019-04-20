@@ -139,18 +139,24 @@ public static class LevelFeature
     #endregion
 
     #region MIXED
-    public static bool IsVacant(LevelFeatureValue value)
-    {
-        return !IsBlocked(value) && !HasObject(value);
-    }
 
-    public static bool IsBlocked(LevelFeatureValue value)
+    public static bool BlocksAgent(LevelFeatureValue value)
     {
         //TODO: Could be blocked by object
         bool groundBlocked = (value & GroundObstructionMask) == GroundObstructionMask;
         return groundBlocked || HasAgent(value);
     }
 
+    public static bool DoesntBlockMovableGround(LevelFeatureValue value)
+    {
+        return !BlocksAgent(value) && !HasObject(value);
+    }
+
+    public static bool WouldBlockMovableGroundWithoutAgent(LevelFeatureValue value)
+    {
+        bool groundBlocked = (value & GroundObstructionMask) == GroundObstructionMask;
+        return groundBlocked || HasObject(value);
+    }
     #endregion
 }
 

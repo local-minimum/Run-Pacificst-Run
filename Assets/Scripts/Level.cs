@@ -190,32 +190,37 @@ public class Level : Singleton<Level>
 
     void MovePlayers()
     {
-        int moves = 0;
-        ushort[] keys = movables.Keys.ToArray();
-
-        for (int i=0, l=keys.Length; i<l; i++)
-        {
-            ushort key = keys[i];
-            Movable m = movables[key];
-            if (m.agentType == AgentType.PLAYER && m.WantsToMove)
-            {
-                if (Enact(m, key))
-                {
-                    moves += 1;
-                    movables[key] = m.Enact();
-
-                } else
-                {
-                    movables[key] = m.Reset();
-                }
-            }
-        }
+        Move(true);
         shouldMove = false;
     }
 
     void MoveOthers()
     {
+        Move(false);
         shouldMoveEveryone = false;
+    }
+
+    private void Move(bool players)
+    {
+        ushort[] keys = movables.Keys.ToArray();
+        for (int i = 0, l = keys.Length; i < l; i++)
+        {
+            ushort key = keys[i];
+            Movable m = movables[key];
+            if ((m.agentType == AgentType.PLAYER) == players && m.WantsToMove)
+            {
+                if (Enact(m, key))
+                {
+                    movables[key] = m.Enact();
+
+                }
+                else
+                {
+                    movables[key] = m.Reset();
+                }
+            }
+        }
+
     }
 
     bool Enact(Movable m, ushort agentId)
@@ -242,13 +247,38 @@ public class Level : Singleton<Level>
     void ResolveConflict(int x, int y, AgentType actor, GameObject who, int xDir, int yDir)
     {
         if (actor != AgentType.PLAYER) return;
-        if (LevelFeature.FulfillsSemanticGroundMask(true, true, levelData[x, y]))
-        {
+        LevelFeatureValue thisVal = levelData[x, y];
+        
+        if (LevelFeature.FulfillsSemanticGroundMask(true, true, thisVal))
+        {           
             if (IsInsideLevel(x + xDir, y + yDir)) {
-                if (LevelFeature.IsVacant(levelData[x + xDir, y + yDir]))
+                LevelFeatureValue nextVal = levelData[x + xDir, y + yDir];
+                if (LevelFeature.DoesntBlockMovableGround(nextVal))
                 {
-                    levelData[x, y] = LevelFeature.SetGround(false, false, levelData[x, y]);
-                    levelData[x + xDir, y + yDir] = LevelFeature.SetGround(true, true, levelData[x + xDir, y + yDir]);
+                    levelData[x, y] = LevelFeature.SetGround(false, false, thisVal);
+                    levelData[x + xDir, y + yDir] = LevelFeature.SetGround(true, true, nextVal);
+                } else
+                {
+                    int xExtraDir = xDir == 0 ? 0 : xDir + Mathf.RoundToInt(Mathf.Sign(xDir));
+                    int yExtraDir = yDir == 0 ? 0 : yDir + Mathf.RoundToInt(Mathf.Sign(yDir));
+                    if (IsInsideLevel(x + xExtraDir, y + yExtraDir))
+                    {
+                        LevelFeatureValue nextNextVal = levelData[x + xExtraDir, y + yExtraDir];
+                        if (!LevelFeature.WouldBlockMovableGroundWithoutAgent(nextVal))
+                        {
+                            if (!IsOccupied(x + xExtraDir, y + yExtraDir, LevelFeature.GetAgentType(nextNextVal)))
+                            {
+                                ushort agentId = LevelFeature.GetAgentId(nextVal);
+                                movables[agentId] = movables[agentId].Evolve(xDir, yDir);
+                                movables[agentId].who.SendMessage("Move", GetPositionAt(x + xDir, y + yDir), SendMessageOptions.RequireReceiver);
+
+                                levelData[x + xExtraDir, y + yExtraDir] = LevelFeature.CopyAgent(nextNextVal, levelData[x + xExtraDir, y + yExtraDir]);
+                                levelData[x + xDir, y + yDir] = LevelFeature.ClearAgent(nextNextVal);
+                                levelData[x, y] = LevelFeature.SetGround(false, false, thisVal);
+                                levelData[x + xDir, y + yDir] = LevelFeature.SetGround(true, true, nextVal);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -256,7 +286,7 @@ public class Level : Singleton<Level>
 
     bool IsOccupied(int x, int y, AgentType actor)
     {
-        return LevelFeature.IsBlocked(levelData[x, y]);
+        return LevelFeature.BlocksAgent(levelData[x, y]);
     }
     
     [SerializeField]
