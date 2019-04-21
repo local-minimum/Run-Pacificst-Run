@@ -104,19 +104,34 @@ public class Level : Singleton<Level>
     public void RegisterAgent(Agent agent)
     {
         agent.OnAction += HandleAgentAction;
+        if (agent.TypeOfAgent == AgentType.PLAYER)
+        {
+            PlayerController player = agent as PlayerController;
+            player.OnPlayerEvent += HandlePlayerEvent;
+        }
     }
 
     public void UnRegisterAgent(Agent agent)
     {        
         agent.OnAction -= HandleAgentAction;
+        if (agent.TypeOfAgent == AgentType.PLAYER)
+        {
+            PlayerController player = agent as PlayerController;
+            player.OnPlayerEvent -= HandlePlayerEvent;
+        }
         movables.Remove(agent.AgentID);
+    }
+
+    private void HandlePlayerEvent(PlayerEventType eventType)
+    {
+        LoadLevel(0);
     }
 
     private void HandleAgentAction(ushort agentId, AgentType agentType, AgentActionType actionType)
     {
         if (movables.Keys.Contains(agentId))
         {
-            movables[agentId] = movables[agentId].Evolve(actionType);
+            SetMovable(agentId, movables[agentId].Evolve(actionType));            
         } else
         {        
             Debug.LogWarning(string.Format("Could not find player id {0}", agentId));
@@ -143,12 +158,49 @@ public class Level : Singleton<Level>
         shouldMoveEveryone = everyone;
     }
 
-
     private void Start()
     {
+        LoadLevel(0);
+    }
+
+    int currentLevel = 0;
+
+    void LoadLevel(int lvl)
+    {
+        levelDidReset = true;
+        GameClock.Instance.ResetClock();
+        currentLevel = lvl;
+        DestroyNonPlayer();
         levelData = LevelDesigner.Generate(0);
         PopulateAgents();
         OnLevelEvent?.Invoke(LevelEventType.LOADED);
+    }
+
+    private void DestroyNonPlayer()
+    {
+        var nonplayers = movables.Where(kvp => kvp.Value.agentType != AgentType.PLAYER).Select(kvp => new {kvp.Value.who, agentID = kvp.Key}).ToArray();
+        for (int i=0; i<nonplayers.Length; i++)
+        {
+            Destroy(nonplayers[i].who);
+            movables.Remove(nonplayers[i].agentID);
+        }
+        Debug.Log($"{movables.Count} movables remain");
+    }
+
+    PlayerController GetPlayer(ushort agentId, int x, int y)
+    {
+        PlayerController player;
+        if (movables.ContainsKey(agentId))
+        {
+            player = movables[agentId].who.GetComponent<PlayerController>();
+            SetMovable(agentId, movables[agentId].Evolve(x, y));            
+        } else
+        {
+            player = Instantiate(playerController);
+            SetMovable(agentId, new Movable(x, y, AgentType.PLAYER, player.gameObject));            
+        }
+        player.Setup(AgentType.PLAYER, agentId);
+        return player;
     }
 
     private void PopulateAgents()
@@ -163,15 +215,13 @@ public class Level : Singleton<Level>
                     ushort agentId = LevelFeature.GetAgentId(val);
                     Debug.Log($"Agent {agentId} on {x} {y} of type {LevelFeature.GetAgentType(val)}");
                     switch (LevelFeature.GetAgentType(val)) {
-                        case AgentType.PLAYER:                            
-                            PlayerController player = Instantiate(playerController);
-                            movables[agentId] = new Movable(x, y, AgentType.PLAYER, player.gameObject);
-                            player.Setup(AgentType.PLAYER, agentId);
+                        case AgentType.PLAYER:
+                            PlayerController player = GetPlayer(agentId, x, y);
                             player.Move(GetPositionAt(x, y));
                             break;
                         case AgentType.MONSTER:                            
                             SillyEnemy enemy = Instantiate(enemyPrefab);
-                            movables[agentId] = new Movable(x, y, AgentType.MONSTER, enemy.gameObject);
+                            SetMovable(agentId, new Movable(x, y, AgentType.MONSTER, enemy.gameObject));                            
                             enemy.Setup(AgentType.MONSTER, agentId);
                             enemy.Move(GetPositionAt(x, y));
                             break;
@@ -179,13 +229,21 @@ public class Level : Singleton<Level>
                 }
             }
         }
+
+        Debug.Log($"{movables.Count} movables in level");
     }
 
     private void Update()
     {
         PlaceFloors();
-        if (shouldMove) MovePlayers();
-        if (shouldMoveEveryone) MoveOthers();
+        if (shouldMove & !levelDidReset) MovePlayers();
+        if (shouldMoveEveryone & !levelDidReset) MoveOthers();
+        if (levelDidReset)
+        {
+            shouldMove = false;
+            shouldMoveEveryone = false;
+            levelDidReset = false;
+        }
     }
 
     void MovePlayers()
@@ -199,35 +257,55 @@ public class Level : Singleton<Level>
         Move(false);
         shouldMoveEveryone = false;
     }
+    bool levelDidReset = false;
+
+    void SetMovable(ushort key, Movable m)
+    {
+        if (!movables.ContainsKey(key) || movables[key].who == m.who)
+        {
+            movables[key] = m;
+        } else
+        {
+            Debug.LogWarning($"Refused setting movabel {key} because game object mismatch.");
+        }
+    }
 
     private void Move(bool players)
     {
         ushort[] keys = movables.Keys.ToArray();
         for (int i = 0, l = keys.Length; i < l; i++)
         {
+            if (levelDidReset) break;
+
             ushort key = keys[i];
             Movable m = movables[key];
             if ((m.agentType == AgentType.PLAYER) == players && m.WantsToMove)
             {
                 if (Enact(m, key))
                 {
-                    movables[key] = m.Enact();
-
+                    SetMovable(key, m.Enact());
                 }
                 else
                 {
-                    movables[key] = m.Reset();
+                    SetMovable(key, m.Reset());
                 }
             }
         }
-
     }
 
     bool Enact(Movable m, ushort agentId)
     {
+        if (m.who == null)
+        {
+            Debug.LogError($"{agentId} is lacking its game object");
+            movables.Remove(agentId);
+            Debug.Log($"{movables.Count} movables remain");
+            return false;
+        }
         int nextX = m.NextX;
         int nextY = m.NextY;
         ResolveConflict(nextX, nextY, m.agentType, m.who, m.actionX, m.actionY);
+        if (levelDidReset) return false;
         bool occupied = IsOccupied(nextX, nextY, m.agentType);
         if (!occupied)
         {
@@ -293,7 +371,7 @@ public class Level : Singleton<Level>
                             if (!IsOccupied(x + xExtraDir, y + yExtraDir, LevelFeature.GetAgentType(nextNextVal)))
                             {
                                 ushort agentId = LevelFeature.GetAgentId(nextVal);
-                                movables[agentId] = movables[agentId].Evolve(xDir, yDir);
+                                SetMovable(agentId, movables[agentId].Evolve(xDir, yDir));                                
                                 movables[agentId].who.SendMessage("Move", GetPositionAt(x + xDir, y + yDir), SendMessageOptions.RequireReceiver);
 
                                 levelData[x + xExtraDir, y + yExtraDir] = LevelFeature.CopyAgent(nextNextVal, levelData[x + xExtraDir, y + yExtraDir]);
@@ -320,6 +398,11 @@ public class Level : Singleton<Level>
     public Movable GetMovableById(ushort id)
     {
         return movables[id];
+    }
+
+    public bool HasAgent(ushort id)
+    {
+        return movables.ContainsKey(id);
     }
 
     Vector2 GetPositionAt(int x, int y)

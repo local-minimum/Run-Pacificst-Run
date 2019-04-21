@@ -48,22 +48,38 @@ public class GameClock : Singleton<GameClock>
         float duration = gameTickTime;
         while (ticking)
         {
-            partialTick += 1;
-            if (playerTicksAreValid || partialTick == partialsPerTick)
+            if (ticks >= 0)
             {
-                OnTick?.Invoke(ticks, partialTick, duration, partialTick == partialsPerTick);
-            }
-            
-            yield return new WaitForSeconds(duration / partialsPerTick);
+                partialTick += 1;
+                if (playerTicksAreValid || partialTick == partialsPerTick)
+                {
+                    OnTick?.Invoke(ticks, partialTick, duration, partialTick == partialsPerTick);
+                }
 
-            if (partialTick == partialsPerTick)
-            {
+                yield return new WaitForSeconds(duration / partialsPerTick);
+
+                if (partialTick == partialsPerTick)
+                {
+                    partialsPerTick = playerTicksPerTick;
+                    playerTicksAreValid = true;
+                    ticks += 1;
+                    partialTick = 0;
+                    duration = gameTickTime;
+                }
+            }
+            else {
                 partialsPerTick = playerTicksPerTick;
                 playerTicksAreValid = true;
                 ticks += 1;
                 partialTick = 0;
                 duration = gameTickTime;
+                yield return new WaitForSeconds(duration);
             }
         }
+    }
+
+    public void ResetClock()
+    {
+        ticks = -3;
     }
 }

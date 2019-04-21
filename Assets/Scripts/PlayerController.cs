@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PlayerEventType { DEATH };
+public delegate void PlayerEvent(PlayerEventType eventType);
 
 public class PlayerController : Agent
 {
@@ -10,6 +12,7 @@ public class PlayerController : Agent
     int health = 3;
 
     AgentActionType nextAction;
+    public event PlayerEvent OnPlayerEvent;
 
     private void Awake()
     {
@@ -76,6 +79,9 @@ public class PlayerController : Agent
 
     void Kill()
     {
-        Debug.Log("Dead!");
+        OnPlayerEvent?.Invoke(PlayerEventType.DEATH);
+        maxHealth = 3;
+        health = 3;
+        lockedHearts = 0;
     }
 }

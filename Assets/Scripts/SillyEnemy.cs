@@ -40,7 +40,7 @@ public class SillyEnemy : Agent
 
     private void HandleTick(int tick, int partialTick, float tickDuration, bool everyone)
     {
-        if (everyone)
+        if (everyone && Level.Instance.HasAgent(AgentID))
         {
             if (energy <= 0)
             {
