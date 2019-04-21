@@ -181,24 +181,19 @@ public class Level : Singleton<Level>
         var nonplayers = movables.Where(kvp => kvp.Value.agentType != AgentType.PLAYER).Select(kvp => new {kvp.Value.who, agentID = kvp.Key}).ToArray();
         for (int i=0; i<nonplayers.Length; i++)
         {
-            Destroy(nonplayers[i].who);
-            movables.Remove(nonplayers[i].agentID);
+            Destroy(nonplayers[i].who);            
         }
-        Debug.Log($"{movables.Count} movables remain");
+        movables.Clear();        
     }
 
     PlayerController GetPlayer(ushort agentId, int x, int y)
     {
-        PlayerController player;
-        if (movables.ContainsKey(agentId))
-        {
-            player = movables[agentId].who.GetComponent<PlayerController>();
-            SetMovable(agentId, movables[agentId].Evolve(x, y));            
-        } else
+        PlayerController player = FindObjectOfType<PlayerController>();
+        if (!player)
         {
             player = Instantiate(playerController);
-            SetMovable(agentId, new Movable(x, y, AgentType.PLAYER, player.gameObject));            
         }
+        SetMovable(agentId, new Movable(x, y, AgentType.PLAYER, player.gameObject), true);
         player.Setup(AgentType.PLAYER, agentId);
         return player;
     }
@@ -221,7 +216,7 @@ public class Level : Singleton<Level>
                             break;
                         case AgentType.MONSTER:                            
                             SillyEnemy enemy = Instantiate(enemyPrefab);
-                            SetMovable(agentId, new Movable(x, y, AgentType.MONSTER, enemy.gameObject));                            
+                            SetMovable(agentId, new Movable(x, y, AgentType.MONSTER, enemy.gameObject), true);                            
                             enemy.Setup(AgentType.MONSTER, agentId);
                             enemy.Move(GetPositionAt(x, y));
                             break;
@@ -259,14 +254,14 @@ public class Level : Singleton<Level>
     }
     bool levelDidReset = false;
 
-    void SetMovable(ushort key, Movable m)
+    void SetMovable(ushort key, Movable m, bool allowFirstWrite = false)
     {
-        if (!movables.ContainsKey(key) || movables[key].who == m.who)
+        if (allowFirstWrite && !movables.ContainsKey(key) || movables[key].who == m.who)
         {
             movables[key] = m;
         } else
         {
-            Debug.LogWarning($"Refused setting movabel {key} because game object mismatch.");
+            Debug.LogWarning($"Refused setting movabel {key} because game object mismatch or missing.");
         }
     }
 
