@@ -54,11 +54,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="32"
-     inkscape:cx="75.553356"
-     inkscape:cy="918.96526"
+     inkscape:zoom="11.313709"
+     inkscape:cx="65.022813"
+     inkscape:cy="906.74587"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g4196"
      showgrid="false"
      inkscape:window-width="1920"
      inkscape:window-height="1057"
@@ -225,7 +225,7 @@
     <rect
        inkscape:export-ydpi="450"
        inkscape:export-xdpi="450"
-       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heart.png"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heartLocked.png"
        style="opacity:1;fill:none;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4165"
        width="10"
@@ -238,7 +238,7 @@
        id="path4167"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccccccccc"
-       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heart.png"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heartLocked.png"
        inkscape:export-xdpi="450"
        inkscape:export-ydpi="450" />
     <path
@@ -247,7 +247,7 @@
        id="path4169"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heart.png"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heartLocked.png"
        inkscape:export-xdpi="450"
        inkscape:export-ydpi="450" />
     <path
@@ -256,8 +256,124 @@
        id="path4171"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heart.png"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heartLocked.png"
        inkscape:export-xdpi="450"
        inkscape:export-ydpi="450" />
+    <g
+       id="g4187"
+       transform="translate(2.6875,-7.3125)"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heartLocked.png"
+       inkscape:export-xdpi="450"
+       inkscape:export-ydpi="450">
+      <path
+         sodipodi:nodetypes="cccsc"
+         inkscape:connector-curvature="0"
+         id="path4173"
+         d="m 75.486401,134.46996 c -0.465571,0.15807 -0.693569,0.46121 -0.868445,0.81779 0.09493,0.17402 0.176785,0.35187 0.531954,0.41982 0.311131,-0.21024 0.573533,-0.44651 0.800724,-0.78288 0.201741,-0.29869 -0.374599,-0.54025 -0.464233,-0.45473 z"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 73.863245,135.83545 c -0.482051,0.0968 -0.747189,0.36806 -0.966529,0.69915 0.07173,0.18479 0.05266,0.33855 0.396121,0.45168 0.335616,-0.16843 0.703599,-0.33579 0.972216,-0.6401 0.238525,-0.27022 -0.301908,-0.58399 -0.401808,-0.51073 z"
+         id="path4175"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccsc" />
+      <path
+         sodipodi:nodetypes="cccsc"
+         inkscape:connector-curvature="0"
+         id="path4177"
+         d="m 74.841041,135.29407 c -0.482051,0.0968 -0.747189,0.36806 -0.966529,0.69915 0.07173,0.18479 0.06103,0.0761 0.233236,0.11743 0.335616,-0.16843 0.522821,-0.19995 0.791534,-0.50417 0.238525,-0.27005 0.04168,-0.28453 -0.05824,-0.31241 z"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 73.073274,136.50941 c -0.482051,0.0968 -0.747189,0.36806 -0.966529,0.69915 0.07173,0.18479 0.06103,0.0761 0.233236,0.11743 0.335616,-0.16843 0.522821,-0.19995 0.791534,-0.50417 0.238525,-0.27005 0.04168,-0.28453 -0.05824,-0.31241 z"
+         id="path4179"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccsc" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 72.138385,137.02468 c -0.490126,0.039 -0.785541,0.27692 -1.042572,0.57968 0.04933,0.19199 0.08504,0.38449 0.412669,0.53752 0.353211,-0.12747 0.665568,-0.29212 0.968355,-0.56245 0.268867,-0.24005 -0.230574,-0.61566 -0.338452,-0.55475 z"
+         id="path4181"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccsc" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 71.221256,137.65016 c -0.491656,-0.004 -0.806878,0.20666 -1.089575,0.48561 0.03223,0.19558 0.04409,0.087 0.204126,0.16285 0.363065,-0.0959 0.552752,-0.0882 0.878247,-0.33075 0.288929,-0.21527 0.09926,-0.26989 0.0072,-0.31771 z"
+         id="path4183"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccsc" />
+      <path
+         sodipodi:nodetypes="cccsc"
+         inkscape:connector-curvature="0"
+         id="path4185"
+         d="m 70.222526,138.03153 c -0.475486,-0.12513 -0.832921,0.002 -1.175556,0.20261 -0.01684,0.19752 -0.04676,0.39101 0.211874,0.6437 0.375487,-0.004 0.724709,-0.0558 1.099815,-0.21089 0.333085,-0.13773 -0.01419,-0.65727 -0.136133,-0.63542 z"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    </g>
+    <g
+       transform="matrix(-1,0,0,1,147.32523,-7.53125)"
+       id="g4196">
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 75.402106,134.45 c -0.440076,0.21926 -0.625224,0.55032 -0.750543,0.92718 0.117476,0.15967 0.222511,0.32489 0.583593,0.34445 0.280021,-0.25018 0.508255,-0.5196 0.688133,-0.88348 0.159728,-0.32311 -0.443868,-0.48495 -0.521183,-0.38815 z"
+         id="path4198"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccsc"
+         inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heartLocked.png"
+         inkscape:export-xdpi="450"
+         inkscape:export-ydpi="450" />
+      <path
+         sodipodi:nodetypes="cccsc"
+         inkscape:connector-curvature="0"
+         id="path4200"
+         d="m 73.863245,135.83545 c -0.482051,0.0968 -0.747189,0.36806 -0.966529,0.69915 0.07173,0.18479 0.05266,0.33855 0.396121,0.45168 0.335616,-0.16843 0.703599,-0.33579 0.972216,-0.6401 0.238525,-0.27022 -0.301908,-0.58399 -0.401808,-0.51073 z"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heartLocked.png"
+         inkscape:export-xdpi="450"
+         inkscape:export-ydpi="450" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 74.841041,135.29407 c -0.482051,0.0968 -0.747189,0.36806 -0.966529,0.69915 0.07173,0.18479 0.06103,0.0761 0.233236,0.11743 0.335616,-0.16843 0.522821,-0.19995 0.791534,-0.50417 0.238525,-0.27005 0.04168,-0.28453 -0.05824,-0.31241 z"
+         id="path4202"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccsc"
+         inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heartLocked.png"
+         inkscape:export-xdpi="450"
+         inkscape:export-ydpi="450" />
+      <path
+         sodipodi:nodetypes="cccsc"
+         inkscape:connector-curvature="0"
+         id="path4204"
+         d="m 73.073274,136.50941 c -0.482051,0.0968 -0.747189,0.36806 -0.966529,0.69915 0.07173,0.18479 0.06103,0.0761 0.233236,0.11743 0.335616,-0.16843 0.522821,-0.19995 0.791534,-0.50417 0.238525,-0.27005 0.04168,-0.28453 -0.05824,-0.31241 z"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heartLocked.png"
+         inkscape:export-xdpi="450"
+         inkscape:export-ydpi="450" />
+      <path
+         sodipodi:nodetypes="cccsc"
+         inkscape:connector-curvature="0"
+         id="path4206"
+         d="m 72.138385,137.02468 c -0.490126,0.039 -0.785541,0.27692 -1.042572,0.57968 0.04933,0.19199 0.08504,0.38449 0.412669,0.53752 0.353211,-0.12747 0.665568,-0.29212 0.968355,-0.56245 0.268867,-0.24005 -0.230574,-0.61566 -0.338452,-0.55475 z"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heartLocked.png"
+         inkscape:export-xdpi="450"
+         inkscape:export-ydpi="450" />
+      <path
+         sodipodi:nodetypes="cccsc"
+         inkscape:connector-curvature="0"
+         id="path4208"
+         d="m 71.221256,137.65016 c -0.491656,-0.004 -0.806878,0.20666 -1.089575,0.48561 0.03223,0.19558 0.04409,0.087 0.204126,0.16285 0.363065,-0.0959 0.552752,-0.0882 0.878247,-0.33075 0.288929,-0.21527 0.09926,-0.26989 0.0072,-0.31771 z"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heartLocked.png"
+         inkscape:export-xdpi="450"
+         inkscape:export-ydpi="450" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 70.164149,137.97522 c -0.487658,-0.0627 -0.82572,0.1093 -1.139568,0.35266 0.0088,0.19804 0.0041,0.39377 0.293188,0.61096 0.371886,-0.052 0.711446,-0.14886 1.063394,-0.35108 0.312521,-0.17957 -0.09891,-0.64994 -0.217014,-0.61254 z"
+         id="path4210"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccsc"
+         inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heartLocked.png"
+         inkscape:export-xdpi="450"
+         inkscape:export-ydpi="450" />
+    </g>
   </g>
 </svg>

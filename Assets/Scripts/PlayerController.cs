@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class PlayerController : Agent
 {
+    int lockedHearts = 0;
+    int maxHealth = 3;
+    int health = 3;
 
     AgentActionType nextAction;
 
@@ -58,4 +61,21 @@ public class PlayerController : Agent
         }
     }
 
+    private void Start()
+    {
+        UIHealthBar.Instance.SetHealth(maxHealth, health, lockedHearts);
+    }
+
+    void Hurt()
+    {
+        health -= 1;
+        if (health <= lockedHearts) lockedHearts = 0;
+        if (health <= 0) Kill();
+        UIHealthBar.Instance.SetHealth(maxHealth, health, lockedHearts);
+    }
+
+    void Kill()
+    {
+        Debug.Log("Dead!");
+    }
 }

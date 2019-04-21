@@ -2,21 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIHealthBar : MonoBehaviour
+public class UIHealthBar : Singleton<UIHealthBar>
 {
     [SerializeField]
     UIHeart heartPrefab;
 
     List<UIHeart> hearts = new List<UIHeart>();
 
-    [SerializeField]
     int lockedHearts = 0;
-
-    [SerializeField]
-    int maxHealth = 3;
-
-    [SerializeField]
-    int health = 3;
+    int maxHealth = 0;
+    int health = 0;
 
     [SerializeField]
     int heartSpacing = 0;
@@ -100,9 +95,16 @@ public class UIHealthBar : MonoBehaviour
         }
     }
 
+    public void SetHealth(int maxHealth, int health, int locked)
+    {
+        this.maxHealth = maxHealth;
+        this.health = health;
+        lockedHearts = locked;
+        UpdateHearts();
+    }
+
     private void OnGUI()
     {
-        UpdateHearts();
         if (heartSpacing != prevSpacing) RePositionHearts();
     }
 }

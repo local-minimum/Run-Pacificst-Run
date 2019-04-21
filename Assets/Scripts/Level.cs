@@ -246,18 +246,42 @@ public class Level : Singleton<Level>
 
     void ResolveConflict(int x, int y, AgentType actor, GameObject who, int xDir, int yDir)
     {
-        if (actor != AgentType.PLAYER) return;
-        LevelFeatureValue thisVal = levelData[x, y];
-        
-        if (LevelFeature.FulfillsSemanticGroundMask(true, true, thisVal))
-        {           
-            if (IsInsideLevel(x + xDir, y + yDir)) {
+        switch (actor)
+        {
+            case AgentType.PLAYER:
+                ResolvePlayerConflict(x, y, xDir, yDir);
+                break;
+            case AgentType.MONSTER:
+                ResolveMonsterConflict(x, y);
+                break;
+        }
+    }
+
+    void ResolveMonsterConflict(int x, int y)
+    {
+        LevelFeatureValue targetVal = levelData[x, y];
+        if (LevelFeature.GetAgentType(targetVal) == AgentType.PLAYER)
+        {
+            ushort agentID = LevelFeature.GetAgentId(targetVal);
+            movables[agentID].who.SendMessage("Hurt", SendMessageOptions.RequireReceiver);
+        }
+    }
+
+    void ResolvePlayerConflict(int x, int y, int xDir, int yDir) 
+    {
+        LevelFeatureValue targetVal = levelData[x, y];
+
+        if (LevelFeature.FulfillsSemanticGroundMask(true, true, targetVal))
+        {
+            if (IsInsideLevel(x + xDir, y + yDir))
+            {
                 LevelFeatureValue nextVal = levelData[x + xDir, y + yDir];
                 if (LevelFeature.DoesntBlockMovableGround(nextVal))
                 {
-                    levelData[x, y] = LevelFeature.SetGround(false, false, thisVal);
+                    levelData[x, y] = LevelFeature.SetGround(false, false, targetVal);
                     levelData[x + xDir, y + yDir] = LevelFeature.SetGround(true, true, nextVal);
-                } else
+                }
+                else
                 {
                     int xExtraDir = xDir == 0 ? 0 : xDir + Mathf.RoundToInt(Mathf.Sign(xDir));
                     int yExtraDir = yDir == 0 ? 0 : yDir + Mathf.RoundToInt(Mathf.Sign(yDir));
@@ -274,7 +298,7 @@ public class Level : Singleton<Level>
 
                                 levelData[x + xExtraDir, y + yExtraDir] = LevelFeature.CopyAgent(nextNextVal, levelData[x + xExtraDir, y + yExtraDir]);
                                 levelData[x + xDir, y + yDir] = LevelFeature.ClearAgent(nextNextVal);
-                                levelData[x, y] = LevelFeature.SetGround(false, false, thisVal);
+                                levelData[x, y] = LevelFeature.SetGround(false, false, targetVal);
                                 levelData[x + xDir, y + yDir] = LevelFeature.SetGround(true, true, nextVal);
                             }
                         }
