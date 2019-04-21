@@ -54,9 +54,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.4"
-     inkscape:cx="52.990223"
-     inkscape:cy="931.81046"
+     inkscape:zoom="32"
+     inkscape:cx="75.553356"
+     inkscape:cy="918.96526"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -222,5 +222,42 @@
          cy="127.58509"
          r="3.0503023" />
     </g>
+    <rect
+       inkscape:export-ydpi="450"
+       inkscape:export-xdpi="450"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heart.png"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4165"
+       width="10"
+       height="10"
+       x="69.781097"
+       y="122.89759" />
+    <path
+       style="fill:#ffffff;fill-rule:evenodd;stroke:#550000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1"
+       d="m 73.45703,124.50553 c -0.23089,-0.32197 -0.56821,-0.0947 -0.56821,-0.0947 -0.124573,0.60029 -0.07748,0.986 -0.0947,1.4521 -0.633833,0.95105 -0.947507,2.77155 -0.198649,3.53176 0.633011,2.39515 1.851869,2.24468 3.150981,2.87322 1.350122,-0.15249 2.496668,-2.3733 1.972161,-3.5955 -0.359199,-0.77722 -0.875004,-1.39783 -1.767767,-1.64149 0.126208,-0.33411 0.451354,-0.70346 0.685234,-1.12943 -0.09517,-0.50803 -0.394847,-0.52164 -0.811174,-0.45818 l -0.887713,1.04363 c -0.218557,-0.37915 -0.383491,-0.803 -0.249037,-1.47633 0.0036,-0.36216 -0.400598,-0.61219 -0.662913,-0.37881 -0.09544,0.69595 -0.04684,1.10384 -0.06313,1.6415 -0.21857,-0.56415 -0.458476,-1.11764 -0.505083,-1.76777 z"
+       id="path4167"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccccccccc"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heart.png"
+       inkscape:export-xdpi="450"
+       inkscape:export-ydpi="450" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#550000;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 75.915295,127.10623 c 0.130397,2.04437 -0.140682,2.55693 -0.858044,3.72722"
+       id="path4169"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heart.png"
+       inkscape:export-xdpi="450"
+       inkscape:export-ydpi="450" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#550000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 74.926424,126.49394 c -0.828264,0.60368 -2.020094,1.77869 -2.352172,2.89393"
+       id="path4171"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Users\martin\RunPacifictRun\Assets\Images\dev\heart.png"
+       inkscape:export-xdpi="450"
+       inkscape:export-ydpi="450" />
   </g>
 </svg>
