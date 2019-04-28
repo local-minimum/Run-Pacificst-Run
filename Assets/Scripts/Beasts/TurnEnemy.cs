@@ -80,15 +80,17 @@ public class TurnEnemy : Enemy
         if (m.x == prevX && m.y == prevY && myAction != TurnEnemyAction.ATTACK)
         {
             annoyance += 1;
+            myAction = TurnEnemyAction.TURN;
             if (annoyance > PanicTurnAtAnnoyance)
-            {
-                heading = RandomHeading;
+            {                
+                heading = RandomHeading;                
             } else
             {
                 heading = GetTurnedHeading();
             }
         } else
         {
+            myAction = TurnEnemyAction.WALK;
             annoyance = 0;
         }
         prevX = m.x;

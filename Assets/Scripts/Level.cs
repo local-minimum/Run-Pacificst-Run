@@ -122,7 +122,12 @@ public class Level : Singleton<Level>
 
     private void HandlePlayerEvent(PlayerEventType eventType)
     {
-        LoadLevel(0);
+        if (eventType == PlayerEventType.DEATH)
+        {
+            currentLevel = 0;
+            LoadLevel(currentLevel);
+        }
+        
     }
 
     private void HandleAgentAction(ushort agentId, AgentType agentType, AgentActionType actionType)
@@ -158,7 +163,7 @@ public class Level : Singleton<Level>
 
     private void Start()
     {
-        LoadLevel(0);
+        LoadLevel(currentLevel);
     }
 
     int currentLevel = 0;
@@ -167,7 +172,6 @@ public class Level : Singleton<Level>
     {
         levelDidReset = true;
         GameClock.Instance.ResetClock();
-        currentLevel = lvl;
         DestroyNonPlayer();
         levelData = LevelDesigner.Generate(0);
         PopulateAgents();
@@ -213,7 +217,7 @@ public class Level : Singleton<Level>
                             player.Move(GetPositionAt(x, y));
                             break;
                         case AgentType.MONSTER:                            
-                            Enemy enemy = Beastiary.Instance.GetABeast(0);
+                            Enemy enemy = Beastiary.Instance.GetABeast(currentLevel);
                             SetMovable(agentId, new Movable(x, y, AgentType.MONSTER, enemy.gameObject), true);                            
                             enemy.Setup(AgentType.MONSTER, agentId);
                             enemy.Move(GetPositionAt(x, y));
