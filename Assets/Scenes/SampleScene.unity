@@ -160,11 +160,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3acfe7ed1b90c184ba05487b34ecc847, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  destroyObjectOnConflict: 1
   heartPrefab: {fileID: 7437618256403845743, guid: b7f7f1fe6aa42fc4db8f4c6480eb3603,
     type: 3}
-  lockedHearts: 0
-  maxHealth: 3
-  health: 3
   heartSpacing: -8
 --- !u!1 &519420028
 GameObject:
@@ -406,6 +404,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1087868440}
   - component: {fileID: 1087868439}
+  - component: {fileID: 1087868441}
   m_Layer: 0
   m_Name: Level
   m_TagString: Untagged
@@ -428,8 +427,6 @@ MonoBehaviour:
   destroyObjectOnConflict: 1
   playerController: {fileID: 4184088290260921918, guid: 8ea49b026f4f63941b9e3b7e3f6efb43,
     type: 3}
-  enemyPrefab: {fileID: 6234631103604733008, guid: f5f530ddb9bb39b4ba431ffaa17a31ad,
-    type: 3}
   gridSize: 1
   floorBasic: {fileID: 21300000, guid: ef6e2f587ee8b1a4f956f13fbd51c0c1, type: 3}
   wallImovable: {fileID: 21300000, guid: 1d70d488448b0e6428d1146f9928eb72, type: 3}
@@ -448,6 +445,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1087868441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1087868438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4abf41b5ef05f547a32d88100a372c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyObjectOnConflict: 1
+  beastPrefabs:
+  - {fileID: 6234631103604733008, guid: f5f530ddb9bb39b4ba431ffaa17a31ad, type: 3}
+  - {fileID: 4261261392322805401, guid: bc33a34d12f62db47b42efbe226d31d0, type: 3}
 --- !u!1 &1598608249
 GameObject:
   m_ObjectHideFlags: 0

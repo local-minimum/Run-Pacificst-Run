@@ -98,8 +98,6 @@ public class Level : Singleton<Level>
 
     [SerializeField]
     PlayerController playerController;
-    [SerializeField]
-    SillyEnemy enemyPrefab;
 
     public void RegisterAgent(Agent agent)
     {
@@ -215,7 +213,7 @@ public class Level : Singleton<Level>
                             player.Move(GetPositionAt(x, y));
                             break;
                         case AgentType.MONSTER:                            
-                            SillyEnemy enemy = Instantiate(enemyPrefab);
+                            Enemy enemy = Beastiary.Instance.GetABeast(0);
                             SetMovable(agentId, new Movable(x, y, AgentType.MONSTER, enemy.gameObject), true);                            
                             enemy.Setup(AgentType.MONSTER, agentId);
                             enemy.Move(GetPositionAt(x, y));
@@ -325,18 +323,19 @@ public class Level : Singleton<Level>
                 ResolvePlayerConflict(x, y, xDir, yDir);
                 break;
             case AgentType.MONSTER:
-                ResolveMonsterConflict(x, y);
+                ResolveMonsterConflict(x, y, who);
                 break;
         }
     }
 
-    void ResolveMonsterConflict(int x, int y)
+    void ResolveMonsterConflict(int x, int y, GameObject monster)
     {
         LevelFeatureValue targetVal = levelData[x, y];
         if (LevelFeature.GetAgentType(targetVal) == AgentType.PLAYER)
         {
             ushort agentID = LevelFeature.GetAgentId(targetVal);
             movables[agentID].who.SendMessage("Hurt", SendMessageOptions.RequireReceiver);
+            monster.SendMessage("PerformedAttack", SendMessageOptions.RequireReceiver);
         }
     }
 

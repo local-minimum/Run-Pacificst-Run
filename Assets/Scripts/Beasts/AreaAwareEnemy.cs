@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SillyEnemy : Agent
+public class AreaAwareEnemy : Enemy
 {
     private void Awake()
     {
@@ -22,6 +22,8 @@ public class SillyEnemy : Agent
         if (Level.Instance)
             Level.Instance.UnRegisterAgent(this);
     }
+
+    protected override void PerformedAttack() {}
 
     [SerializeField]
     int activationRange = 5;
